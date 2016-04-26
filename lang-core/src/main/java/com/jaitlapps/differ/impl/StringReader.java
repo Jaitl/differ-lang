@@ -24,7 +24,7 @@ public class StringReader implements Reader {
 
     private final String stream;
     private final char[] charStream;
-    private final int lenghtSteram;
+    private final int lengthStream;
 
     private int startPosition;
     private int endPosition;
@@ -32,14 +32,43 @@ public class StringReader implements Reader {
     public StringReader(String stream) {
         this.stream = stream;
         this.charStream = stream.toCharArray();
-        this.lenghtSteram = stream.length();
+        this.lengthStream = stream.length();
 
         this.startPosition = 0;
         this.endPosition = 0;
     }
 
     @Override
-    public String readOne() {
+    public String readNextWord() {
+        while (endPosition < lengthStream && charStream[endPosition] == ' ') {
+            endPosition++;
+        }
+
+        startPosition = endPosition;
+
+        if (endPosition < lengthStream) {
+            if (endPosition < lengthStream && SEPARATORS.contains(charStream[endPosition])) {
+                endPosition++;
+            } else {
+                while (endPosition < lengthStream && charStream[endPosition] != ' ') {
+                    if (SEPARATORS.contains(charStream[endPosition])) {
+                        break;
+                    }
+                    endPosition++;
+                }
+            }
+
+            return stream.substring(startPosition, endPosition);
+        }
+
         return null;
+    }
+
+    public int getStartPosition() {
+        return startPosition;
+    }
+
+    public int getEndPosition() {
+        return endPosition;
     }
 }

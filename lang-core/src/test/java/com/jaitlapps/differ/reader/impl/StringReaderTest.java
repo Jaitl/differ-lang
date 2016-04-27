@@ -1,14 +1,13 @@
-package com.jaitlapps.differ.impl;
+package com.jaitlapps.differ.reader.impl;
 
-import com.jaitlapps.differ.Reader;
+import com.jaitlapps.differ.reader.Reader;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
 public class StringReaderTest {
     @Test
-    public void testOneWord()
-    {
+    public void testOneWord() {
         Reader wordReader = new StringReader("Третье");
 
         String word = wordReader.readNextWord();
@@ -22,8 +21,7 @@ public class StringReaderTest {
     }
 
     @Test
-    public void testOneWordSpace()
-    {
+    public void testOneWordSpace() {
         Reader wordReader = new StringReader("   Третье      ");
 
         String word = wordReader.readNextWord();
@@ -37,8 +35,7 @@ public class StringReaderTest {
     }
 
     @Test
-    public void testTwoWordPlus()
-    {
+    public void testTwoWordPlus() {
         Reader wordReader = new StringReader("ere+err");
 
         String word = wordReader.readNextWord();
@@ -64,8 +61,7 @@ public class StringReaderTest {
     }
 
     //@Test
-    public void testTwoWordExpression()
-    {
+    public void testTwoWordExpression() {
         Reader wordReader = new StringReader("qwe=123--4");
 
         String word = wordReader.readNextWord();
@@ -103,8 +99,7 @@ public class StringReaderTest {
     }
 
     @Test
-    public void testTwoWordExpression1()
-    {
+    public void testTwoWordExpression1() {
         Reader wordReader = new StringReader("qwe  =123-  4");
 
         String word = wordReader.readNextWord();
@@ -142,8 +137,7 @@ public class StringReaderTest {
     }
 
     @Test
-    public void testThreeWord()
-    {
+    public void testThreeWord() {
         Reader wordReader = new StringReader("Третье 123 12345");
 
         String word = wordReader.readNextWord();
@@ -171,8 +165,7 @@ public class StringReaderTest {
 
 
     @Test
-    public void testMinus1()
-    {
+    public void testMinus1() {
         Reader wordReader = new StringReader("22+-4");
 
         String word = wordReader.readNextWord();
@@ -196,8 +189,7 @@ public class StringReaderTest {
     }
 
     @Test
-    public void testMinus2()
-    {
+    public void testMinus2() {
         Reader wordReader = new StringReader("22- 4");
 
         String word = wordReader.readNextWord();
@@ -217,8 +209,7 @@ public class StringReaderTest {
     }
 
     @Test
-    public void testMinus3()
-    {
+    public void testMinus3() {
         Reader wordReader = new StringReader("22 - 4");
 
         String word = wordReader.readNextWord();
@@ -238,8 +229,7 @@ public class StringReaderTest {
     }
 
     @Test
-    public void testMinus4()
-    {
+    public void testMinus4() {
         Reader wordReader = new StringReader("22 -4");
 
         String word = wordReader.readNextWord();
@@ -259,8 +249,7 @@ public class StringReaderTest {
     }
 
     @Test
-    public void testMinus5()
-    {
+    public void testMinus5() {
         Reader wordReader = new StringReader("22-4");
 
         String word = wordReader.readNextWord();
@@ -280,8 +269,7 @@ public class StringReaderTest {
     }
 
     @Test
-    public void testMinus6()
-    {
+    public void testMinus6() {
         Reader wordReader = new StringReader("-");
 
         String word = wordReader.readNextWord();
@@ -294,8 +282,7 @@ public class StringReaderTest {
 
 
     @Test
-    public void testMinus7()
-    {
+    public void testMinus7() {
         Reader wordReader = new StringReader("45 * 2 - 3");
 
         String word = wordReader.readNextWord();

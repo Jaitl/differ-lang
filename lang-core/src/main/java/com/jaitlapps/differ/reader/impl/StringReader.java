@@ -1,7 +1,7 @@
-package com.jaitlapps.differ.impl;
+package com.jaitlapps.differ.reader.impl;
 
 import com.google.common.collect.ImmutableSet;
-import com.jaitlapps.differ.Reader;
+import com.jaitlapps.differ.reader.Reader;
 
 import java.util.Set;
 

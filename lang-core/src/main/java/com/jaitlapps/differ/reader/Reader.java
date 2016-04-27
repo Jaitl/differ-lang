@@ -1,4 +1,4 @@
-package com.jaitlapps.differ;
+package com.jaitlapps.differ.reader;
 
 public interface Reader {
     String readNextWord();

@@ -3,6 +3,7 @@ package com.jaitlapps.differ.lexical.impl
 import com.google.common.collect.ImmutableSet
 import com.jaitlapps.differ.lexical.LexicalAnalyzer
 import com.jaitlapps.differ.model.*
+import com.jaitlapps.differ.model.Token
 import com.jaitlapps.differ.reader.Reader
 
 class DifferLexicalAnalyzer(private val reader: Reader) : LexicalAnalyzer {
@@ -11,26 +12,34 @@ class DifferLexicalAnalyzer(private val reader: Reader) : LexicalAnalyzer {
     private var prevToken: Token? = null
 
     override fun nextToken(): Token {
-        var token = Token()
-        token.prevToken = prevToken
+        val token: Token;
 
         val word = reader.readNextWord()
 
         if (word != null) {
-            token.sourceString = word.lexeme
-            token.capitalizedString = word.lexeme.toLowerCase()
-
-            token.startPosition = word.startPosition
-            token.endPosition = word.endPosition
-
-            //token = DetermineTypeToken(token)
+            token = determineToken(word)
         } else {
-            token.tokenType = TokenType.Eof
+            token = Token(Word(0,0,"",""), TokenType.Eof)
         }
 
         prevToken = token
 
         return token
+    }
+
+    private fun determineToken(word: Word): Token {
+        val tokenKeyword = tryDetermineKeyword(word)
+        if(tokenKeyword != null) {
+            val token = Token(word, TokenType.Keyword)
+            token.keywordType = tokenKeyword
+            return token
+        }
+
+        return Token(word, TokenType.Unknown)
+    }
+
+    private fun tryDetermineKeyword(word: Word): KeywordType? {
+        return KeywordType.KEYWORDS[word.capitalizedWord]
     }
 
     // TODO: REFACTOR ME PLEASE!!!!!
@@ -101,16 +110,6 @@ class DifferLexicalAnalyzer(private val reader: Reader) : LexicalAnalyzer {
         return token
     }*/
 
-    private fun TryDetermineKeyword(token: String): String? {
-        var result: String? = null
-
-        if (KEYWORDS.contains(token)) {
-            result = token
-        }
-
-        return result
-    }
-
     private fun TryDetermineExpression(token: String): String? {
         var result: String? = null
 
@@ -142,7 +141,6 @@ class DifferLexicalAnalyzer(private val reader: Reader) : LexicalAnalyzer {
     }
 
     companion object {
-        private val KEYWORDS = ImmutableSet.builder<String>().add("начало").add("первое").add("второе").add("третье").add("сочетаемое").build()
 
         private fun TryDetermineInteger(token: String): Int? {
             try {

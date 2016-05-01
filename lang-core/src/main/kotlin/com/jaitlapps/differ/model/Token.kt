@@ -1,10 +1,7 @@
 package com.jaitlapps.differ.model
 
-class Token {
-    var sourceString: String? = null
-    var capitalizedString: String? = null
+class Token(val word: Word, val tokenType: TokenType) {
 
-    var tokenType: TokenType? = null
     var keywordType: KeywordType? = null
     var expressionType: ExpressionType? = null
 
@@ -12,8 +9,5 @@ class Token {
     var valueReal: Double = 0.toDouble()
 
     var prevToken: Token? = null
-
-    var startPosition: Int = 0
-    var endPosition: Int = 0
 }
 

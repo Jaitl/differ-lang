@@ -36,7 +36,9 @@ class StringReader(private val stream: String) : Reader {
                 }
             }
 
-            return Word(startPosition, endPosition, stream.substring(startPosition, endPosition))
+            val word = stream.substring(startPosition, endPosition)
+
+            return Word(startPosition, endPosition, word, word.toLowerCase())
         }
 
         return null

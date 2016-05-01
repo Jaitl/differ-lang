@@ -1,6 +1,6 @@
 package com.jaitlapps.differ.reader.impl
 
-import com.google.common.collect.ImmutableSet
+import com.jaitlapps.differ.model.SymbolType
 import com.jaitlapps.differ.model.Word
 import com.jaitlapps.differ.reader.Reader
 
@@ -25,11 +25,11 @@ class StringReader(private val stream: String) : Reader {
         startPosition = endPosition
 
         if (endPosition < lengthStream) {
-            if (endPosition < lengthStream && SEPARATORS.contains(charStream[endPosition])) {
+            if (endPosition < lengthStream && SymbolType.SYMBOLS.containsKey(charStream[endPosition].toString())) {
                 endPosition++
             } else {
                 while (endPosition < lengthStream && charStream[endPosition] != ' ') {
-                    if (SEPARATORS.contains(charStream[endPosition])) {
+                    if (SymbolType.SYMBOLS.containsKey(charStream[endPosition].toString())) {
                         break
                     }
                     endPosition++
@@ -42,9 +42,5 @@ class StringReader(private val stream: String) : Reader {
         }
 
         return null
-    }
-
-    companion object {
-        private val SEPARATORS = ImmutableSet.builder<Char>().add('+').add('-').add('*').add('/').add('=').add('[').add(']').add('^').add(' ').add('\n').add('\r').add(',').build()
     }
 }

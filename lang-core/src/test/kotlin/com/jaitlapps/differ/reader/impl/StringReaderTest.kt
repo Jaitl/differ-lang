@@ -1,7 +1,8 @@
 package com.jaitlapps.differ.reader.impl
 
 import org.junit.Test
-import kotlin.test.*
+import kotlin.test.assertEquals
+import kotlin.test.assertNull
 
 class StringReaderTest {
     @Test

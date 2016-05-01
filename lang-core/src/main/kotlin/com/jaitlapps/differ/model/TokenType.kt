@@ -2,14 +2,10 @@ package com.jaitlapps.differ.model
 
 enum class TokenType {
     Keyword,
+    Symbol,
+    Method,
     Integer,
     Real,
-    Variable,
-    Label,
-    Comma,
-    Expression,
-    Equal,
     Unknown,
-    Eof,
-    EndLine
+    Eof
 }

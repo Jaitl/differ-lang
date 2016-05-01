@@ -3,7 +3,10 @@ package com.jaitlapps.differ.lexical.impl
 import com.google.common.collect.ImmutableSet
 import com.jaitlapps.differ.lexical.LexicalAnalyzer
 import com.jaitlapps.differ.model.*
-import com.jaitlapps.differ.model.Token
+import com.jaitlapps.differ.model.token.KeywordToken
+import com.jaitlapps.differ.model.token.MethodToken
+import com.jaitlapps.differ.model.token.SymbolToken
+import com.jaitlapps.differ.model.token.Token
 import com.jaitlapps.differ.reader.Reader
 
 class DifferLexicalAnalyzer(private val reader: Reader) : LexicalAnalyzer {
@@ -19,7 +22,7 @@ class DifferLexicalAnalyzer(private val reader: Reader) : LexicalAnalyzer {
         if (word != null) {
             token = determineToken(word)
         } else {
-            token = Token(Word(0,0,"",""), TokenType.Eof)
+            token = Token(Word(0, 0, "", ""), TokenType.Eof)
         }
 
         prevToken = token
@@ -30,9 +33,17 @@ class DifferLexicalAnalyzer(private val reader: Reader) : LexicalAnalyzer {
     private fun determineToken(word: Word): Token {
         val tokenKeyword = tryDetermineKeyword(word)
         if(tokenKeyword != null) {
-            val token = Token(word, TokenType.Keyword)
-            token.keywordType = tokenKeyword
-            return token
+            return KeywordToken(word, TokenType.Keyword, tokenKeyword)
+        }
+
+        val tokenMethod = tryDetermineMethod(word)
+        if (tokenMethod != null) {
+            return MethodToken(word, TokenType.Method, tokenMethod)
+        }
+
+        val symbolMethod = tryDetermineSymbol(word)
+        if (symbolMethod != null) {
+            return SymbolToken(word, TokenType.Symbol, symbolMethod)
         }
 
         return Token(word, TokenType.Unknown)
@@ -40,6 +51,14 @@ class DifferLexicalAnalyzer(private val reader: Reader) : LexicalAnalyzer {
 
     private fun tryDetermineKeyword(word: Word): KeywordType? {
         return KeywordType.KEYWORDS[word.capitalizedWord]
+    }
+
+    private fun tryDetermineMethod(word: Word): MethodType? {
+        return MethodType.METHODS[word.capitalizedWord]
+    }
+
+    private fun tryDetermineSymbol(word: Word): SymbolType? {
+        return SymbolType.SYMBOLS[word.capitalizedWord]
     }
 
     // TODO: REFACTOR ME PLEASE!!!!!

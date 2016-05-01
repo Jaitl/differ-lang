@@ -1,6 +1,6 @@
-package com.jaitlapps.differ.model;
+package com.jaitlapps.differ.model
 
-public enum ExpressionType {
+enum class ExpressionType {
     Addition,
     Subtraction,
     Multiplication,

@@ -6,6 +6,7 @@ import com.jaitlapps.differ.model.SymbolType
 import com.jaitlapps.differ.model.TokenType
 import com.jaitlapps.differ.model.token.KeywordToken
 import com.jaitlapps.differ.model.token.MethodToken
+import com.jaitlapps.differ.model.token.NumberToken
 import com.jaitlapps.differ.model.token.SymbolToken
 import com.jaitlapps.differ.reader.impl.StringReader
 import org.junit.Assert.assertEquals
@@ -49,5 +50,107 @@ class DifferLexicalAnalyzerTest {
         val symbolToken = lexicalAnalyzer.nextToken() as SymbolToken
         assertEquals(TokenType.Symbol, symbolToken.tokenType)
         assertEquals(SymbolType.Semicolon, symbolToken.symbolType)
+    }
+
+    @Test
+    fun testKeyWordDefinition() {
+        val lexicalAnalyzer = DifferLexicalAnalyzer(StringReader("Коэффициенты a = 4;"))
+
+        val token:KeywordToken = lexicalAnalyzer.nextToken() as KeywordToken
+
+        assertEquals(TokenType.Keyword, token.tokenType)
+        assertEquals(KeywordType.Coefficient, token.keywordType)
+
+        val coefficientToken = lexicalAnalyzer.nextToken()
+
+        assertEquals(TokenType.Coefficient, coefficientToken.tokenType)
+        assertEquals("a", coefficientToken.word.word)
+
+        val equalToken = lexicalAnalyzer.nextToken() as SymbolToken
+
+        assertEquals(TokenType.Symbol, equalToken.tokenType)
+        assertEquals(SymbolType.Equal, equalToken.symbolType)
+
+        val numberToken = lexicalAnalyzer.nextToken() as NumberToken
+
+        assertEquals(TokenType.Integer, numberToken.tokenType)
+        assertEquals(4, numberToken.number.toInt())
+
+        val symbolToken = lexicalAnalyzer.nextToken() as SymbolToken
+        assertEquals(TokenType.Symbol, symbolToken.tokenType)
+        assertEquals(SymbolType.Semicolon, symbolToken.symbolType)
+    }
+
+    @Test
+    fun testNumber() {
+        val lexicalAnalyzer = DifferLexicalAnalyzer(StringReader("12334 323.432"))
+
+        val tokenInteger = lexicalAnalyzer.nextToken() as NumberToken
+
+        assertEquals(TokenType.Integer, tokenInteger.tokenType)
+        assertEquals(12334, tokenInteger.number.toInt())
+
+        val tokenDouble = lexicalAnalyzer.nextToken() as NumberToken
+
+        assertEquals(TokenType.Double, tokenDouble.tokenType)
+        assertEquals(323.432.toDouble(), tokenDouble.number.toDouble(), 0.1)
+    }
+
+    @Test
+    fun testKeywordInterval() {
+        val lexicalAnalyzer = DifferLexicalAnalyzer(StringReader("Интервал 0.6, 50;"))
+
+        val token:KeywordToken = lexicalAnalyzer.nextToken() as KeywordToken
+
+        assertEquals(TokenType.Keyword, token.tokenType)
+        assertEquals(KeywordType.Interval, token.keywordType)
+
+        val tokenDouble = lexicalAnalyzer.nextToken() as NumberToken
+
+        assertEquals(TokenType.Double, tokenDouble.tokenType)
+        assertEquals(0.6.toDouble(), tokenDouble.number.toDouble(), 0.1)
+
+        val tokenComma = lexicalAnalyzer.nextToken() as SymbolToken
+
+        assertEquals(TokenType.Symbol, tokenComma.tokenType)
+        assertEquals(SymbolType.Comma, tokenComma.symbolType)
+
+        val tokenInteger = lexicalAnalyzer.nextToken() as NumberToken
+
+        assertEquals(TokenType.Integer, tokenInteger.tokenType)
+        assertEquals(50, tokenInteger.number.toInt())
+
+        val symbolToken = lexicalAnalyzer.nextToken() as SymbolToken
+        assertEquals(TokenType.Symbol, symbolToken.tokenType)
+        assertEquals(SymbolType.Semicolon, symbolToken.symbolType)
+    }
+
+    @Test
+    fun testKeywordStep() {
+        val lexicalAnalyzer = DifferLexicalAnalyzer(StringReader("Шаг 0.6;"))
+
+        val token:KeywordToken = lexicalAnalyzer.nextToken() as KeywordToken
+
+        assertEquals(TokenType.Keyword, token.tokenType)
+        assertEquals(KeywordType.Step, token.keywordType)
+
+        val tokenDouble = lexicalAnalyzer.nextToken() as NumberToken
+
+        assertEquals(TokenType.Double, tokenDouble.tokenType)
+        assertEquals(0.6.toDouble(), tokenDouble.number.toDouble(), 0.1)
+
+        val symbolToken = lexicalAnalyzer.nextToken() as SymbolToken
+        assertEquals(TokenType.Symbol, symbolToken.tokenType)
+        assertEquals(SymbolType.Semicolon, symbolToken.symbolType)
+    }
+
+    @Test
+    fun testKeywordValue() {
+        val lexicalAnalyzer = DifferLexicalAnalyzer(StringReader("Значение x1 = 10;"))
+
+        val token:KeywordToken = lexicalAnalyzer.nextToken() as KeywordToken
+
+        assertEquals(TokenType.Keyword, token.tokenType)
+        assertEquals(null, token.keywordType)
     }
 }

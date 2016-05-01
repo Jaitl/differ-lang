@@ -4,8 +4,9 @@ enum class TokenType {
     Keyword,
     Symbol,
     Method,
+    Coefficient,
     Integer,
-    Real,
+    Double,
     Unknown,
     Eof
 }

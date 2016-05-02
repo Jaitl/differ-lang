@@ -5,5 +5,5 @@ import com.jaitlapps.differ.model.token.Token
 import java.util.*
 
 class SyntaxTree(val token: Token) {
-    val childs: HashMap<TokenType, SyntaxTree> = hashMapOf()
+    val childs: ArrayList<SyntaxTree> = arrayListOf()
 }

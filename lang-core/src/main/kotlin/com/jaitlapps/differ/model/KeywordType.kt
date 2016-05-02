@@ -5,13 +5,15 @@ enum class KeywordType(val keywordName: String) {
     Method("метод"),
     Coefficient("коэффициенты"),
     Interval("интервал"),
-    Step("шаг");
+    Step("шаг"),
+    Value("значения");
 
     companion object keywords {
         val KEYWORDS = mapOf(Program.keywordName to Program,
                 Method.keywordName to Method,
                 Coefficient.keywordName to Coefficient,
                 Interval.keywordName to Interval,
-                Step.keywordName to Step)
+                Step.keywordName to Step,
+                Value.keywordName to Value)
     }
 }

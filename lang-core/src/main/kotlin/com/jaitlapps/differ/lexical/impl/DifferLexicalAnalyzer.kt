@@ -8,7 +8,6 @@ import com.jaitlapps.differ.reader.Reader
 
 class DifferLexicalAnalyzer(private val reader: Reader) : LexicalAnalyzer {
 
-    private val EXPRESSIONS = ImmutableSet.builder<String>().add("+").add("-").add("*").add("/").add("^").add("]").add("[").build()
     private var prevToken: Token? = null
 
     override fun nextToken(): Token {
@@ -53,6 +52,11 @@ class DifferLexicalAnalyzer(private val reader: Reader) : LexicalAnalyzer {
             return number
         }
 
+        val Xk = tryDetermineXk(word)
+        if (Xk) {
+            return Token(word, TokenType.Xk)
+        }
+
         return Token(word, TokenType.Unknown)
     }
 
@@ -70,6 +74,10 @@ class DifferLexicalAnalyzer(private val reader: Reader) : LexicalAnalyzer {
 
     private fun tryDetermineCoefficient(word: Word): Boolean {
         return word.capitalizedWord.matches(Regex("[a-z]"))
+    }
+
+    private fun tryDetermineXk(word: Word): Boolean {
+        return word.capitalizedWord.matches(Regex("[x]\\d+"))
     }
 
     private fun tryDetermineNumber(word: Word): Token? {

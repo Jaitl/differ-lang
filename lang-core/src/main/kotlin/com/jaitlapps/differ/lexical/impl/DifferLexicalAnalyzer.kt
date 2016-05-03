@@ -1,6 +1,5 @@
 package com.jaitlapps.differ.lexical.impl
 
-import com.google.common.collect.ImmutableSet
 import com.jaitlapps.differ.lexical.LexicalAnalyzer
 import com.jaitlapps.differ.model.*
 import com.jaitlapps.differ.model.token.*

@@ -9,8 +9,8 @@ import com.jaitlapps.differ.model.token.MethodToken
 import com.jaitlapps.differ.model.token.NumberToken
 import com.jaitlapps.differ.model.token.SymbolToken
 import com.jaitlapps.differ.reader.impl.StringReader
-import org.junit.Assert.assertEquals
 import org.junit.Test
+import kotlin.test.assertEquals
 
 class DifferLexicalAnalyzerTest {
     @Test
@@ -93,7 +93,7 @@ class DifferLexicalAnalyzerTest {
         val tokenDouble = lexicalAnalyzer.nextToken() as NumberToken
 
         assertEquals(TokenType.Double, tokenDouble.tokenType)
-        assertEquals(323.432.toDouble(), tokenDouble.number.toDouble(), 0.1)
+        assertEquals(323.432.toDouble(), tokenDouble.number.toDouble())
     }
 
     @Test
@@ -108,7 +108,7 @@ class DifferLexicalAnalyzerTest {
         val tokenDouble = lexicalAnalyzer.nextToken() as NumberToken
 
         assertEquals(TokenType.Double, tokenDouble.tokenType)
-        assertEquals(0.6.toDouble(), tokenDouble.number.toDouble(), 0.1)
+        assertEquals(0.6.toDouble(), tokenDouble.number.toDouble())
 
         val tokenComma = lexicalAnalyzer.nextToken() as SymbolToken
 
@@ -137,7 +137,7 @@ class DifferLexicalAnalyzerTest {
         val tokenDouble = lexicalAnalyzer.nextToken() as NumberToken
 
         assertEquals(TokenType.Double, tokenDouble.tokenType)
-        assertEquals(0.6.toDouble(), tokenDouble.number.toDouble(), 0.1)
+        assertEquals(0.6.toDouble(), tokenDouble.number.toDouble())
 
         val symbolToken = lexicalAnalyzer.nextToken() as SymbolToken
         assertEquals(TokenType.Symbol, symbolToken.tokenType)

@@ -1,6 +1,5 @@
 package com.jaitlapps.differ.syntax
 
-import com.jaitlapps.differ.model.TokenType
 import com.jaitlapps.differ.model.token.Token
 import java.util.*
 

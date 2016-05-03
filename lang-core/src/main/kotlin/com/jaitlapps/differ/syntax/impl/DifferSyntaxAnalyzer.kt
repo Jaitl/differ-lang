@@ -5,15 +5,13 @@ import com.jaitlapps.differ.model.KeywordType
 import com.jaitlapps.differ.model.TokenType
 import com.jaitlapps.differ.model.Word
 import com.jaitlapps.differ.model.token.KeywordToken
-import com.jaitlapps.differ.syntax.rule.DifferSyntaxRulesFactory
 import com.jaitlapps.differ.syntax.SyntaxAnalyzer
-import com.jaitlapps.differ.syntax.rule.SyntaxRule
 import com.jaitlapps.differ.syntax.SyntaxTree
 import com.jaitlapps.differ.syntax.rule.FailureRuleResult
 import com.jaitlapps.differ.syntax.rule.SuccessRuleResult
+import com.jaitlapps.differ.syntax.rule.SyntaxRule
 
-class DifferSyntaxAnalyzer(val lexicalAnalyzer: LexicalAnalyzer) : SyntaxAnalyzer {
-    private val rootRule: SyntaxRule = DifferSyntaxRulesFactory.createDifferRules()
+class DifferSyntaxAnalyzer(val lexicalAnalyzer: LexicalAnalyzer, val rootRule: SyntaxRule) : SyntaxAnalyzer {
     private val rootTree: SyntaxTree = SyntaxTree(KeywordToken(Word(0, 0, "", ""), TokenType.Keyword, KeywordType.Program))
 
     override fun generateSyntaxTree(): SyntaxTree {

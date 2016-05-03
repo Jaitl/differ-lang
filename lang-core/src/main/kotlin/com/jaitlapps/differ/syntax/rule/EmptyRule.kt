@@ -7,4 +7,8 @@ object EmptyRule: SyntaxRule {
     override fun applyRule(token: Token, rootTree: SyntaxTree, currentTree: SyntaxTree): RuleResult {
         return FailureRuleResult("Правила закончились")
     }
+
+    override fun setNextRule(rule: SyntaxRule) {
+        throw UnsupportedOperationException()
+    }
 }

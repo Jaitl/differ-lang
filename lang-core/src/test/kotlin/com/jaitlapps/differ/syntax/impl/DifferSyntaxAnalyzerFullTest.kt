@@ -16,10 +16,11 @@ import org.junit.Assert
 import org.junit.Test
 import kotlin.test.assertEquals
 
-class DifferSyntaxAnalyzerTest {
+class DifferSyntaxAnalyzerFullTest {
+
     @Test
-    fun testMethod(){
-        val syntaxAnalyzer = createSyntaxAnalyzer("Метод Эйлера;", DifferSyntaxRulesFactory.createDifferMethodRules())
+    fun testFullSyntaxAnalyzer() {
+        val syntaxAnalyzer = createSyntaxAnalyzer("Программа Метод Эйлера; Коэффициенты a = 10; b = 50;", DifferSyntaxRulesFactory.createDifferFullRules())
 
         val tree = syntaxAnalyzer.generateSyntaxTree();
 
@@ -27,9 +28,11 @@ class DifferSyntaxAnalyzerTest {
         assertEquals(TokenType.Keyword, programToken.tokenType)
         assertEquals(KeywordType.Program, programToken.keywordType)
 
-        assertEquals(1, tree.childs.count())
+        assertEquals(2, tree.childs.count())
 
-        val methodTree = tree.childs[0]
+        val methodTree = tree.childs
+                .findLast { tree -> val token = tree.token; token is KeywordToken && token.keywordType == KeywordType.Method }!!
+
         val methodToken = methodTree.token as KeywordToken
 
         assertEquals(TokenType.Keyword, methodToken.tokenType)
@@ -44,21 +47,11 @@ class DifferSyntaxAnalyzerTest {
         assertEquals(MethodType.Eiler, eilerToken.methodType)
 
         assertEquals(0, eilerTree.childs.count())
-    }
 
-    @Test
-    fun testCoefficient() {
-        val syntaxAnalyzer = createSyntaxAnalyzer("Коэффициенты a = 10; b = 50;", DifferSyntaxRulesFactory.createDifferCoefficientRules())
+        val coefficientTree = tree.childs
+                .findLast { tree -> val token = tree.token; token is KeywordToken && token.keywordType == KeywordType.Coefficient }!!
 
-        val tree = syntaxAnalyzer.generateSyntaxTree();
-
-        val programToken = tree.token as KeywordToken
-        assertEquals(TokenType.Keyword, programToken.tokenType)
-        assertEquals(KeywordType.Program, programToken.keywordType)
-
-        assertEquals(1, tree.childs.count())
-
-        val coeffNodeTree = tree.childs[0]
+        val coeffNodeTree = coefficientTree
         val coeffToken = coeffNodeTree.token as KeywordToken
 
         assertEquals(TokenType.Keyword, coeffToken.tokenType)

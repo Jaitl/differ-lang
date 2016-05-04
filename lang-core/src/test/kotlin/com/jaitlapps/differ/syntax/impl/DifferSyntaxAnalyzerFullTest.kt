@@ -16,7 +16,7 @@ class DifferSyntaxAnalyzerFullTest {
 
     @Test
     fun testFullSyntaxAnalyzer() {
-        val syntaxAnalyzer = DifferFactory.createSyntaxAnalyzer("Программа Метод Эйлера; Коэффициенты a = 10; b = 50;",
+        val syntaxAnalyzer = DifferFactory.createSyntaxAnalyzer("Программа Метод Эйлера; Коэффициенты a = 10; b = 50; Интервал 0, 50; Шаг 0.6; Значения x11 = 10; x22 = 43;",
                 DifferSyntaxRulesFactory.createDifferFullRules())
 
         val tree = syntaxAnalyzer.generateSyntaxTree();
@@ -25,7 +25,7 @@ class DifferSyntaxAnalyzerFullTest {
         assertEquals(TokenType.Keyword, programToken.tokenType)
         assertEquals(KeywordType.Program, programToken.keywordType)
 
-        assertEquals(2, tree.childs.count())
+        assertEquals(5, tree.childs.count())
 
         val methodTree = tree.childs
                 .findLast { tree -> val token = tree.token; token is KeywordToken && token.keywordType == KeywordType.Method }!!
@@ -87,5 +87,91 @@ class DifferSyntaxAnalyzerFullTest {
         assertEquals(50, coeffBIntToken.number.toInt())
 
         assertEquals(0, coeffBIntTree.childs.count())
+
+        val intervalTree = tree.childs
+                .first { tree -> val token = tree.token; token is KeywordToken && token.keywordType == KeywordType.Interval }
+
+        val intervalToken = intervalTree.token as KeywordToken
+
+        assertEquals(TokenType.Keyword, intervalToken.tokenType)
+        assertEquals(KeywordType.Interval, intervalToken.keywordType)
+
+        assertEquals(2, intervalTree.childs.count())
+
+        val numberTree0 = intervalTree.childs.first { tree -> val token = tree.token; token is NumberToken && token.number.toInt() == 0 }
+        val numberToken0 = numberTree0.token as NumberToken
+
+        assertEquals(TokenType.Integer, numberToken0.tokenType)
+        assertEquals(0, numberToken0.number.toInt())
+
+        assertEquals(0, numberTree0.childs.count())
+
+        val numberTree50 = intervalTree.childs.first { tree -> val token = tree.token; token is NumberToken && token.number.toInt() == 50 }
+        val numberToken50 = numberTree50.token as NumberToken
+
+        assertEquals(TokenType.Integer, numberToken50.tokenType)
+        assertEquals(50, numberToken50.number.toInt())
+
+        assertEquals(0, numberTree50.childs.count())
+
+        val stepTree = tree.childs
+                .first { tree -> val token = tree.token; token is KeywordToken && token.keywordType == KeywordType.Step }
+
+        val stepToken = stepTree.token as KeywordToken
+
+        assertEquals(TokenType.Keyword, stepToken.tokenType)
+        assertEquals(KeywordType.Step, stepToken.keywordType)
+
+        assertEquals(1, stepTree.childs.count())
+
+        val numberTree = stepTree.childs[0]
+        val numberToken = numberTree.token as NumberToken
+
+        assertEquals(TokenType.Double, numberToken.tokenType)
+        assertEquals(0.6.toDouble(), numberToken.number.toDouble())
+
+        assertEquals(0, numberTree.childs.count())
+
+        val valueTree = tree.childs
+                .first { tree -> val token = tree.token; token is KeywordToken && token.keywordType == KeywordType.Value }
+
+        val valueToken = valueTree.token as KeywordToken
+
+        assertEquals(TokenType.Keyword, valueToken.tokenType)
+        assertEquals(KeywordType.Value, valueToken.keywordType)
+
+        assertEquals(2, valueTree.childs.count())
+
+        val x11Tree = valueTree.childs.first { tree -> tree.token.word.word == "x11" }
+        val x11Token = x11Tree.token
+
+        assertEquals(TokenType.Xk, x11Token.tokenType)
+        assertEquals("x11", x11Token.word.word)
+
+        assertEquals(1, x11Tree.childs.count())
+
+        val x11valTree = x11Tree.childs[0]
+        val x11valToken = x11valTree.token as NumberToken
+
+        assertEquals(TokenType.Integer, x11valToken.tokenType)
+        assertEquals(10, x11valToken.number.toInt())
+
+        assertEquals(0, x11valTree.childs.count())
+
+        val x22Tree = valueTree.childs.first { tree -> tree.token.word.word == "x22" }
+        val x22Token = x22Tree.token
+
+        assertEquals(TokenType.Xk, x22Token.tokenType)
+        assertEquals("x22", x22Token.word.word)
+
+        assertEquals(1, x22Tree.childs.count())
+
+        val x22valTree = x22Tree.childs[0]
+        val x22valToken = x22valTree.token as NumberToken
+
+        assertEquals(TokenType.Integer, x22valToken.tokenType)
+        assertEquals(43, x22valToken.number.toInt())
+
+        assertEquals(0, x22valTree.childs.count())
     }
 }

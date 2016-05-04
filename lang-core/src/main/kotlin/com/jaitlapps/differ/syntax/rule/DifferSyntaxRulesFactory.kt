@@ -14,7 +14,13 @@ object DifferSyntaxRulesFactory {
         val programRule = DifferSyntaxRule({token -> token is KeywordToken && token.keywordType == KeywordType.Program},
                 "Программа должна начинаться с оператора \"Программа\"", TreeSavePosition.None)
 
-        val coefficient = createDifferCoefficientRules()
+        val value = createDifferValueRules()
+
+        val step = createDifferStepRules(endRule = value)
+
+        val interval = createDifferIntervalRules(endRule = step)
+
+        val coefficient = createDifferCoefficientRules(endRule = interval)
 
         val methodRule = createDifferMethodRules(startRule = programRule, endRule = coefficient)
 
@@ -61,23 +67,116 @@ object DifferSyntaxRulesFactory {
 
         equalRule.setNextRule(numberRule)
 
-        val semiСoefficientRule = DifferSyntaxRule({token -> token is SymbolToken && token.symbolType == SymbolType.Semicolon},
-                ErrorMessageGenerator.generateEndSymbolObject("Коеффециенты", ";"), TreeSavePosition.None)
+        val semiCoefficientRule = DifferSyntaxRule({token -> token is SymbolToken && token.symbolType == SymbolType.Semicolon}, ErrorMessageGenerator.generateEndSymbolObject("Коеффециенты", ";"), TreeSavePosition.None)
 
-        numberRule.setNextRule(semiСoefficientRule)
+        numberRule.setNextRule(semiCoefficientRule)
 
-        val endСoefficientRule: ComposeDifferSyntaxRule = ComposeDifferSyntaxRule("Ошибочка")
+        val endCoefficientRule = ComposeDifferSyntaxRule("Ошибочка")
 
-        semiСoefficientRule.setNextRule(endСoefficientRule)
+        semiCoefficientRule.setNextRule(endCoefficientRule)
 
-        endСoefficientRule.setNextRule(coefNodeRule)
+        endCoefficientRule.setNextRule(coefNodeRule)
 
         if (endRule != null) {
-            endСoefficientRule.setNextRule(endRule)
+            endCoefficientRule.setNextRule(endRule)
         } else {
-            endСoefficientRule.setNextRule(EofRule)
+            endCoefficientRule.setNextRule(EofRule)
         }
 
         return coefficientRule
+    }
+
+    fun createDifferIntervalRules(startRule: SyntaxRule? = null, endRule: SyntaxRule? = null): SyntaxRule {
+        val intervalRule = DifferSyntaxRule({token -> token is KeywordToken && token.keywordType == KeywordType.Interval},
+                ErrorMessageGenerator.generateNextObject("Коеффециенты", "Интервал"), TreeSavePosition.RootTree)
+
+        startRule?.setNextRule(intervalRule)
+
+        val numberRuleOne = DifferSyntaxRule({token -> token is NumberToken &&
+                (token.tokenType == TokenType.Integer || token.tokenType == TokenType.Double)},
+                ErrorMessageGenerator.generateNextMultipleObject("Интервал", listOf("Целое", "Вещественное")), TreeSavePosition.NodeTree)
+
+        intervalRule.setNextRule(numberRuleOne)
+
+        val commaRule = DifferSyntaxRule({token -> token is SymbolToken && token.symbolType == SymbolType.Comma},
+                ErrorMessageGenerator.generateNextObject("Число", ","), TreeSavePosition.None)
+
+        numberRuleOne.setNextRule(commaRule)
+
+        val numberRuleTwo = DifferSyntaxRule({token -> token is NumberToken &&
+                (token.tokenType == TokenType.Integer || token.tokenType == TokenType.Double)},
+                ErrorMessageGenerator.generateNextMultipleObject(",", listOf("Целое", "Вещественное")), TreeSavePosition.NodeTree)
+
+        commaRule.setNextRule(numberRuleTwo)
+
+        val semiCoefficientRule = DifferSyntaxRule({token -> token is SymbolToken && token.symbolType == SymbolType.Semicolon}, ErrorMessageGenerator.generateEndSymbolObject("Число", ";"), TreeSavePosition.None)
+
+        numberRuleTwo.setNextRule(semiCoefficientRule)
+
+        endRule?.let { semiCoefficientRule.setNextRule(endRule) }
+
+        return intervalRule
+    }
+
+    fun createDifferStepRules(startRule: SyntaxRule? = null, endRule: SyntaxRule? = null): SyntaxRule {
+        val stepRule = DifferSyntaxRule({token -> token is KeywordToken && token.keywordType == KeywordType.Step},
+                ErrorMessageGenerator.generateNextObject("Интервал", "Шаг"), TreeSavePosition.RootTree)
+
+        startRule?.setNextRule(stepRule)
+
+        val numberRule = DifferSyntaxRule({token -> token is NumberToken &&
+                (token.tokenType == TokenType.Integer || token.tokenType == TokenType.Double)},
+                ErrorMessageGenerator.generateNextMultipleObject("Шаг", listOf("Целое", "Вещественное")), TreeSavePosition.NodeTree)
+
+        stepRule.setNextRule(numberRule)
+
+        val semiCoefficientRule = DifferSyntaxRule({token -> token is SymbolToken && token.symbolType == SymbolType.Semicolon}, ErrorMessageGenerator.generateEndSymbolObject("Число", ";"), TreeSavePosition.None)
+
+        numberRule.setNextRule(semiCoefficientRule)
+
+        endRule?.let { semiCoefficientRule.setNextRule(endRule) }
+
+        return stepRule
+    }
+
+    fun createDifferValueRules(startRule: SyntaxRule? = null, endRule: SyntaxRule? = null): SyntaxRule {
+        val valueRule = DifferSyntaxRule({token -> token is KeywordToken && token.keywordType == KeywordType.Value},
+                ErrorMessageGenerator.generateNextObject("Шаг", "Значения"), TreeSavePosition.RootTree)
+
+        startRule?.setNextRule(valueRule)
+
+        val xkRule = DifferSyntaxRule({token -> token.tokenType == TokenType.Xk},
+                ErrorMessageGenerator.generateNextObject("Значения", "xk"), TreeSavePosition.NodeTree)
+
+        valueRule.setNextRule(xkRule)
+
+        val equalRule = DifferSyntaxRule({token -> token is SymbolToken && token.symbolType == SymbolType.Equal},
+                ErrorMessageGenerator.generateNextObject("xk", "="), TreeSavePosition.None)
+
+        xkRule.setNextRule(equalRule)
+
+        val numberRule = DifferSyntaxRule({token -> token is NumberToken &&
+                (token.tokenType == TokenType.Integer || token.tokenType == TokenType.Double)},
+                ErrorMessageGenerator.generateNextMultipleObject("=", listOf("Целое", "Вещественное")), TreeSavePosition.CurrentTree)
+
+        equalRule.setNextRule(numberRule)
+
+        val semiValueRule = DifferSyntaxRule({token -> token is SymbolToken && token.symbolType == SymbolType.Semicolon}, ErrorMessageGenerator.generateEndSymbolObject("Значения", ";"), TreeSavePosition.None)
+
+        numberRule.setNextRule(semiValueRule)
+
+        val endValueRule = ComposeDifferSyntaxRule("Ошибочка другая")
+
+        semiValueRule.setNextRule(endValueRule)
+
+        endValueRule.setNextRule(xkRule)
+
+        if (endRule != null) {
+            endValueRule.setNextRule(endRule)
+        } else {
+            endValueRule.setNextRule(EofRule)
+        }
+
+        return valueRule
     }
 }

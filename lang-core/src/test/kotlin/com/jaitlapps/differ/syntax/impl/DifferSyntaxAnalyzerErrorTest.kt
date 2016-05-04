@@ -68,4 +68,28 @@ class DifferSyntaxAnalyzerErrorTest {
             assertEquals("Оператор \"Метод\" должен заканчиваться символом \";\"", e.message)
         }
     }
+
+    @Test
+    fun testMultiCoeffError() {
+        val syntaxAnalyzer = DifferFactory.createSyntaxAnalyzer("Программа Метод Эйлера; Коэффициенты a = 0.001; 123",
+                DifferSyntaxRulesFactory.createDifferFullRules())
+
+        try {
+            syntaxAnalyzer.generateSyntaxTree();
+        } catch(e: SyntaxException) {
+            assertEquals("", e.message)
+        }
+    }
+
+    @Test
+    fun testMultiValueError() {
+        val syntaxAnalyzer = DifferFactory.createSyntaxAnalyzer("Программа Метод Эйлера; Коэффициенты a = 10; b = 50; Интервал 0, 50; Шаг 0.6; Значения x11 = 10; x22 = 43; 123",
+                DifferSyntaxRulesFactory.createDifferFullRules())
+
+        try {
+            syntaxAnalyzer.generateSyntaxTree();
+        } catch(e: SyntaxException) {
+            assertEquals("", e.message)
+        }
+    }
 }

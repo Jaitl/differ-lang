@@ -1,17 +1,13 @@
 package com.jaitlapps.differ.syntax.impl
 
-import com.jaitlapps.differ.lexical.impl.DifferLexicalAnalyzer
+import com.jaitlapps.differ.factory.DifferFactory
 import com.jaitlapps.differ.model.KeywordType
 import com.jaitlapps.differ.model.MethodType
 import com.jaitlapps.differ.model.TokenType
 import com.jaitlapps.differ.model.token.KeywordToken
 import com.jaitlapps.differ.model.token.MethodToken
 import com.jaitlapps.differ.model.token.NumberToken
-import com.jaitlapps.differ.reader.impl.StringReader
-import com.jaitlapps.differ.syntax.DifferSyntaxAnalyzer
-import com.jaitlapps.differ.syntax.SyntaxAnalyzer
 import com.jaitlapps.differ.syntax.rule.DifferSyntaxRulesFactory
-import com.jaitlapps.differ.syntax.rule.SyntaxRule
 import org.junit.Assert
 import org.junit.Test
 import kotlin.test.assertEquals
@@ -19,7 +15,8 @@ import kotlin.test.assertEquals
 class DifferSyntaxAnalyzerTest {
     @Test
     fun testMethod(){
-        val syntaxAnalyzer = createSyntaxAnalyzer("Метод Эйлера;", DifferSyntaxRulesFactory.createDifferMethodRules())
+        val syntaxAnalyzer = DifferFactory.createSyntaxAnalyzer("Метод Эйлера;",
+                DifferSyntaxRulesFactory.createDifferMethodRules())
 
         val tree = syntaxAnalyzer.generateSyntaxTree();
 
@@ -48,7 +45,8 @@ class DifferSyntaxAnalyzerTest {
 
     @Test
     fun testCoefficient() {
-        val syntaxAnalyzer = createSyntaxAnalyzer("Коэффициенты a = 10; b = 50;", DifferSyntaxRulesFactory.createDifferCoefficientRules())
+        val syntaxAnalyzer = DifferFactory.createSyntaxAnalyzer("Коэффициенты a = 10; b = 50;",
+                DifferSyntaxRulesFactory.createDifferCoefficientRules())
 
         val tree = syntaxAnalyzer.generateSyntaxTree();
 
@@ -97,9 +95,5 @@ class DifferSyntaxAnalyzerTest {
         assertEquals(50, coeffBIntToken.number.toInt())
 
         assertEquals(0, coeffBIntTree.childs.count())
-    }
-
-    fun createSyntaxAnalyzer(code: String, rule: SyntaxRule): SyntaxAnalyzer {
-        return DifferSyntaxAnalyzer(DifferLexicalAnalyzer(StringReader(code)), rule)
     }
 }

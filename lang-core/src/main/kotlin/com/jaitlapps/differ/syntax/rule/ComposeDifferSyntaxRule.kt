@@ -4,7 +4,7 @@ import com.jaitlapps.differ.model.token.Token
 import com.jaitlapps.differ.syntax.TreeContext
 import java.util.*
 
-class ComposeDifferSyntaxRule(val currentError: () -> String) : SyntaxRule {
+class ComposeDifferSyntaxRule(val currentError: String) : SyntaxRule {
 
     val rules: ArrayList<SyntaxRule> = arrayListOf()
 
@@ -28,6 +28,6 @@ class ComposeDifferSyntaxRule(val currentError: () -> String) : SyntaxRule {
             }
         }
 
-        return FailureRuleResult(currentError())
+        return FailureRuleResult(currentError)
     }
 }

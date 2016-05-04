@@ -7,11 +7,12 @@ import com.jaitlapps.differ.model.token.KeywordToken
 import com.jaitlapps.differ.model.token.MethodToken
 import com.jaitlapps.differ.model.token.NumberToken
 import com.jaitlapps.differ.model.token.SymbolToken
+import com.jaitlapps.differ.syntax.error.ErrorMessageGenerator
 
 object DifferSyntaxRulesFactory {
     fun createDifferFullRules() : SyntaxRule {
         val programRule = DifferSyntaxRule({token -> token is KeywordToken && token.keywordType == KeywordType.Program},
-                {"Программа должна начинаться с оператора \"Программа\""}, TreeSavePosition.None)
+                "Программа должна начинаться с оператора \"Программа\"", TreeSavePosition.None)
 
         val coefficient = createDifferCoefficientRules()
 
@@ -22,16 +23,16 @@ object DifferSyntaxRulesFactory {
 
     fun createDifferMethodRules(startRule: SyntaxRule? = null, endRule: SyntaxRule? = null): SyntaxRule {
         val methodRule = DifferSyntaxRule({token -> token is KeywordToken && token.keywordType == KeywordType.Method},
-                {"За оператором \"Программа\" должен следовать оператор \"Метод\""}, TreeSavePosition.RootTree)
+                ErrorMessageGenerator.generateNextObject("Программа", "Метод"), TreeSavePosition.RootTree)
 
         startRule?.setNextRule(methodRule)
 
         val eilerRule = DifferSyntaxRule({token -> token is MethodToken},
-                {"За оператором \"Метод\" должно следовать название метода"}, TreeSavePosition.NodeTree)
+                ErrorMessageGenerator.generateNextMultipleObject("Метод", listOf("Эйлера", "РунгеКутты")), TreeSavePosition.NodeTree)
         methodRule.setNextRule(eilerRule)
 
         val endMetdodRule = DifferSyntaxRule({token -> token is SymbolToken && token.symbolType == SymbolType.Semicolon},
-                {"Оператор \"Метод\" должен заканчиваться символом \";\""}, TreeSavePosition.None)
+                ErrorMessageGenerator.generateEndSymbolObject("Метод", ";"), TreeSavePosition.None)
 
         eilerRule.setNextRule(endMetdodRule)
 
@@ -42,36 +43,40 @@ object DifferSyntaxRulesFactory {
 
     fun createDifferCoefficientRules(startRule: SyntaxRule? = null, endRule: SyntaxRule? = null): SyntaxRule {
         val coefficientRule = DifferSyntaxRule({token -> token is KeywordToken && token.keywordType == KeywordType.Coefficient},
-                {"За оператором \"Метод\" должен следовать оператор \"Коеффециенты\""}, TreeSavePosition.RootTree)
+               ErrorMessageGenerator.generateNextObject("Метод", "Коеффециенты"), TreeSavePosition.RootTree)
 
         val coefNodeRule = DifferSyntaxRule({token -> token.tokenType == TokenType.Coefficient},
-                {"За оператором \"Коеффециенты\" должен следовать оператор \"коев\""}, TreeSavePosition.NodeTree)
+                ErrorMessageGenerator.generateNextObject("Коеффециенты", "Коеффециент"), TreeSavePosition.NodeTree)
 
         coefficientRule.setNextRule(coefNodeRule)
 
         val equalRule = DifferSyntaxRule({token -> token is SymbolToken && token.symbolType == SymbolType.Equal},
-                {"За оператором \"Коеффециенты\" должен следовать оператор \"=\""}, TreeSavePosition.None)
+                ErrorMessageGenerator.generateNextObject("Коеффециент", "="), TreeSavePosition.None)
 
         coefNodeRule.setNextRule(equalRule)
 
         val numberRule = DifferSyntaxRule({token -> token is NumberToken &&
                 (token.tokenType == TokenType.Integer || token.tokenType == TokenType.Double)},
-                {"За оператором \"=\" должено следовать целое или вещественное число"}, TreeSavePosition.CurrentTree)
+                ErrorMessageGenerator.generateNextMultipleObject("=", listOf("Целое", "Вещественное")), TreeSavePosition.CurrentTree)
 
         equalRule.setNextRule(numberRule)
 
         val semiСoefficientRule = DifferSyntaxRule({token -> token is SymbolToken && token.symbolType == SymbolType.Semicolon},
-                {"Оператор \"Коеффециенты\" должен заканчиваться символом \";\""}, TreeSavePosition.None)
+                ErrorMessageGenerator.generateEndSymbolObject("Коеффециенты", ";"), TreeSavePosition.None)
 
         numberRule.setNextRule(semiСoefficientRule)
 
-        val endСoefficientRule: ComposeDifferSyntaxRule = ComposeDifferSyntaxRule{"Ошибочка"}
+        val endСoefficientRule: ComposeDifferSyntaxRule = ComposeDifferSyntaxRule("Ошибочка")
 
         semiСoefficientRule.setNextRule(endСoefficientRule)
 
         endСoefficientRule.setNextRule(coefNodeRule)
 
-        endRule?.run { endСoefficientRule.setNextRule(endRule) }
+        if (endRule != null) {
+            endСoefficientRule.setNextRule(endRule)
+        } else {
+            endСoefficientRule.setNextRule(EofRule)
+        }
 
         return coefficientRule
     }

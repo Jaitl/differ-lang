@@ -20,6 +20,7 @@ class DifferLexicalAnalyzer(private val reader: Reader) : LexicalAnalyzer {
             token = Token(Word(0, 0, "", ""), TokenType.Eof)
         }
 
+        token.prevToken = prevToken
         prevToken = token
 
         return token

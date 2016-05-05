@@ -1,5 +1,0 @@
-dependencies {
-    //testCompile 'junit:junit:4.11'
-    compile 'com.google.guava:guava:19.0'
-
-}

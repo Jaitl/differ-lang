@@ -19,5 +19,10 @@ class DifferInterpreterTest {
 
         assertEquals(0.toDouble(), interpreter.startInterval)
         assertEquals(50.toDouble(), interpreter.endInterval)
+
+        assertEquals(0.6.toDouble(), interpreter.step)
+
+        assertEquals(10.toDouble(), interpreter.xk["x11"])
+        assertEquals(43.toDouble(), interpreter.xk["x22"])
     }
 }

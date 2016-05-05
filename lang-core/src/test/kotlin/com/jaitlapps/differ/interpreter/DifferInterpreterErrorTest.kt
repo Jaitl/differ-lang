@@ -17,4 +17,15 @@ class DifferInterpreterErrorTest {
             assertEquals("Коэффициент с именем \"a\" уже существует. Выберите другое имя.", e.message)
         }
     }
+
+    @Test
+    fun testXkAlreadyExists() {
+        val interpreter = DifferFactory.createDifferInterpreter("Программа Метод Эйлера; Коэффициенты a = 10; b = 50; Интервал 0, 50; Шаг 0.6; Значения x11 = 10; x11 = 43;")
+        try {
+            interpreter.run();
+            fail()
+        } catch (e: InterpreterException) {
+            assertEquals("xk с именем \"x11\" уже существует. Выберите другое имя.", e.message)
+        }
+    }
 }

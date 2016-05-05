@@ -5,6 +5,7 @@ import com.jaitlapps.differ.interpreter.exception.InterpreterException
 import com.jaitlapps.differ.model.KeywordType
 import com.jaitlapps.differ.model.MethodType
 import com.jaitlapps.differ.model.token.KeywordToken
+import com.jaitlapps.differ.model.token.MethodToken
 import com.jaitlapps.differ.model.token.NumberToken
 import com.jaitlapps.differ.syntax.SyntaxAnalyzer
 import com.jaitlapps.differ.syntax.SyntaxTree
@@ -24,11 +25,22 @@ class DifferInterpreter(val syntax: SyntaxAnalyzer) {
         extractMethod(syntaxTree)
         extractCoefficients(syntaxTree)
         extractInterval(syntaxTree)
-
+        extractStep(syntaxTree)
+        extractXk(syntaxTree)
     }
 
     private fun extractMethod(tree: SyntaxTree) {
+        val methodTree = tree.childs.findLast { tree -> val token = tree.token; token is KeywordToken && token.keywordType == KeywordType.Method }
 
+        if (methodTree != null) {
+            if (methodTree.childs.count() == 1) {
+                method = (methodTree.childs[0].token as MethodToken).methodType
+            } else {
+                throw Exception("Method node not found")
+            }
+        } else {
+            throw Exception("Method value not found")
+        }
     }
 
     private fun extractCoefficients(tree: SyntaxTree) {
@@ -38,7 +50,7 @@ class DifferInterpreter(val syntax: SyntaxAnalyzer) {
             for (node in coefficientsTree.childs) {
                 val coefName = node.token.word.word
                 if (coefficients.containsKey(coefName)) {
-                    throw InterpreterException(InterpreterErrorGenerator.generateCoefficientsAlreadyExist(coefName))
+                    throw InterpreterException(InterpreterErrorGenerator.generateOperatorAlreadyExist("Коэффициент", coefName))
                 }
                 if (node.childs.count() == 1) {
                     val coefValue = node.childs[0].token as NumberToken
@@ -68,6 +80,41 @@ class DifferInterpreter(val syntax: SyntaxAnalyzer) {
             }
         } else {
             throw Exception("Interval node not found")
+        }
+    }
+
+    fun extractStep(tree: SyntaxTree) {
+        val stepTree = tree.childs.findLast { tree -> val token = tree.token; token is KeywordToken && token.keywordType == KeywordType.Step }
+
+        if (stepTree != null) {
+            if (stepTree.childs.count() == 1) {
+                step = (stepTree.childs[0].token as NumberToken).number.toDouble()
+            } else {
+                throw Exception("Step node not found")
+            }
+        } else {
+            throw Exception("Step value not found")
+        }
+    }
+
+    fun extractXk(tree: SyntaxTree) {
+        val xkTree = tree.childs.findLast { tree -> val token = tree.token; token is KeywordToken && token.keywordType == KeywordType.Value }
+
+        if (xkTree != null) {
+            for (node in xkTree.childs) {
+                val xkName = node.token.word.word
+                if (xk.containsKey(xkName)) {
+                    throw InterpreterException(InterpreterErrorGenerator.generateOperatorAlreadyExist("xk", xkName))
+                }
+                if (node.childs.count() == 1) {
+                    val xkValue = node.childs[0].token as NumberToken
+                    xk.put(xkName, xkValue.number.toDouble())
+                } else {
+                    throw Exception("xk value not found")
+                }
+            }
+        } else {
+            throw Exception("xk node not found")
         }
     }
 }

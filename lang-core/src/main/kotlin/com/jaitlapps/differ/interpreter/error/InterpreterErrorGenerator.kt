@@ -1,7 +1,7 @@
 package com.jaitlapps.differ.interpreter.error
 
 object InterpreterErrorGenerator {
-    fun generateCoefficientsAlreadyExist(name: String): String {
-        return "Коэффициент с именем \"%s\" уже существует. Выберите другое имя.".format(name)
+    fun generateOperatorAlreadyExist(operator: String, name: String): String {
+        return "%s с именем \"%s\" уже существует. Выберите другое имя.".format(operator, name)
     }
 }

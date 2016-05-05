@@ -21,8 +21,13 @@ class DifferInterpreter(val syntax: SyntaxAnalyzer) {
 
     fun run() {
         val syntaxTree: SyntaxTree = syntax.generateSyntaxTree()
+        extractMethod(syntaxTree)
         extractCoefficients(syntaxTree)
         extractInterval(syntaxTree)
+
+    }
+
+    private fun extractMethod(tree: SyntaxTree) {
 
     }
 

@@ -13,5 +13,8 @@ class DifferInterpreterTest {
         assertEquals(2, interpreter.coefficients.count())
         assertEquals(10.toDouble(), interpreter.coefficients["a"])
         assertEquals(50.toDouble(), interpreter.coefficients["b"])
+
+        assertEquals(0.toDouble(), interpreter.startInterval)
+        assertEquals(50.toDouble(), interpreter.endInterval)
     }
 }

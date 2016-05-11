@@ -57,6 +57,11 @@ class DifferLexicalAnalyzer(private val reader: Reader) : LexicalAnalyzer {
             return Token(word, TokenType.Xk)
         }
 
+        val differential = tryDetermineDifferential(word)
+        if (differential) {
+            return Token(word, TokenType.Differential)
+        }
+
         return Token(word, TokenType.Unknown)
     }
 
@@ -78,6 +83,10 @@ class DifferLexicalAnalyzer(private val reader: Reader) : LexicalAnalyzer {
 
     private fun tryDetermineXk(word: Word): Boolean {
         return word.capitalizedWord.matches(Regex("[x]\\d+"))
+    }
+
+    private fun tryDetermineDifferential(word: Word): Boolean {
+        return word.capitalizedWord.matches(Regex("dxdt\\d+"))
     }
 
     private fun tryDetermineNumber(word: Word): Token? {

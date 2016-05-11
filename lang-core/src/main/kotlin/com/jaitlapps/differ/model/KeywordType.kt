@@ -6,7 +6,8 @@ enum class KeywordType(val keywordName: String, val priority: Int) {
     Coefficient("коэффициенты", 1),
     Interval("интервал", 1),
     Step("шаг", 1),
-    Value("значения", 1);
+    Value("значения", 1),
+    Equation("уравнения", 1);
 
     companion object keywords {
         val KEYWORDS = mapOf(Program.keywordName to Program,
@@ -14,6 +15,7 @@ enum class KeywordType(val keywordName: String, val priority: Int) {
                 Coefficient.keywordName to Coefficient,
                 Interval.keywordName to Interval,
                 Step.keywordName to Step,
-                Value.keywordName to Value)
+                Value.keywordName to Value,
+                Equation.keywordName to Equation)
     }
 }

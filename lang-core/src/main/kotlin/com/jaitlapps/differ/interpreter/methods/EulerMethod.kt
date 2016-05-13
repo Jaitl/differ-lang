@@ -3,9 +3,9 @@ package com.jaitlapps.differ.interpreter.methods
 import org.mvel2.MVEL
 import java.util.*
 
-class EulerMethod {
+class EulerMethod : Method {
 
-    fun calculate(coeff: Map<String, Double>, xk: Map<String, Double>, startInterval: Double, endInterval: Double, step: Double, expressions: Map<String, String>): MethodResult {
+    override fun calculate(coeff: Map<String, Double>, xk: Map<String, Double>, startInterval: Double, endInterval: Double, step: Double, expressions: Map<String, String>): MethodResult {
         val currentXk = HashMap<String, ArrayList<Double>>()
         for((x,k) in xk) {
             val array = ArrayList<Double>()

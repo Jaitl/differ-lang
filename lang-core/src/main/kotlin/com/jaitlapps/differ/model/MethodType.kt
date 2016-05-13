@@ -1,9 +1,9 @@
 package com.jaitlapps.differ.model
 
 enum class MethodType(val methodName: String) {
-    Eiler("эйлера");
+    Euler("эйлера");
 
     companion object methods {
-        val METHODS = mapOf(Eiler.methodName to Eiler)
+        val METHODS = mapOf(Euler.methodName to Euler)
     }
 }

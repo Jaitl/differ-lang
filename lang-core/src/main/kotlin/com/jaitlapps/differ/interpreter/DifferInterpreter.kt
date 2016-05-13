@@ -2,11 +2,16 @@ package com.jaitlapps.differ.interpreter
 
 import com.jaitlapps.differ.interpreter.error.InterpreterErrorGenerator
 import com.jaitlapps.differ.interpreter.exception.InterpreterException
+import com.jaitlapps.differ.interpreter.methods.EulerMethod
+import com.jaitlapps.differ.interpreter.methods.MethodResult
 import com.jaitlapps.differ.model.KeywordType
 import com.jaitlapps.differ.model.MethodType
+import com.jaitlapps.differ.model.SymbolType
+import com.jaitlapps.differ.model.TokenType
 import com.jaitlapps.differ.model.token.KeywordToken
 import com.jaitlapps.differ.model.token.MethodToken
 import com.jaitlapps.differ.model.token.NumberToken
+import com.jaitlapps.differ.model.token.SymbolToken
 import com.jaitlapps.differ.syntax.SyntaxAnalyzer
 import com.jaitlapps.differ.syntax.SyntaxTree
 import java.util.*
@@ -14,19 +19,29 @@ import java.util.*
 class DifferInterpreter(val syntax: SyntaxAnalyzer) {
     val coefficients: HashMap<String, Double> = hashMapOf()
     val xk: HashMap<String, Double> = hashMapOf()
+    val dxdtk: HashMap<String, String> = hashMapOf()
 
     var startInterval: Double? = null
     var endInterval: Double? = null
     var step: Double? = null
     var method: MethodType? = null
 
-    fun run() {
+    var countBracket = 0;
+
+    fun run(): MethodResult {
         val syntaxTree: SyntaxTree = syntax.generateSyntaxTree()
         extractMethod(syntaxTree)
         extractCoefficients(syntaxTree)
         extractInterval(syntaxTree)
         extractStep(syntaxTree)
         extractXk(syntaxTree)
+        extractDxdtk(syntaxTree)
+
+        val methodCalc = when(method!!) {
+            MethodType.Euler -> EulerMethod()
+        }
+
+        return methodCalc.calculate(coefficients, xk, startInterval!!, endInterval!!, step!!, dxdtk)
     }
 
     private fun extractMethod(tree: SyntaxTree) {
@@ -116,5 +131,90 @@ class DifferInterpreter(val syntax: SyntaxAnalyzer) {
         } else {
             throw Exception("xk node not found")
         }
+    }
+
+    fun extractDxdtk(tree: SyntaxTree) {
+        val dxdtkTree = tree.childs.findLast { tree -> val token = tree.token; token is KeywordToken && token.keywordType == KeywordType.Equation }
+
+        if (dxdtkTree != null) {
+
+            if (dxdtkTree.childs.count() != xk.count()) {
+                throw InterpreterException(InterpreterErrorGenerator.generateCountValues())
+            }
+
+            for (node in dxdtkTree.childs) {
+                val dxdtkName = node.token.word.word
+                if (dxdtk.containsKey(dxdtkName)) {
+                    throw InterpreterException(InterpreterErrorGenerator.generateOperatorAlreadyExist("dxdtk", dxdtkName))
+                }
+                if (node.childs.count() == 1) {
+                    val dxdtkVal = prepareFuns(parseEquation(node.childs[0]))
+                    dxdtk.put(dxdtkName, dxdtkVal)
+
+                    if (countBracket != 0) {
+                        if (countBracket > 0) {
+                            throw InterpreterException(InterpreterErrorGenerator.generateManyOpenBracket())
+                        } else {
+                            throw InterpreterException(InterpreterErrorGenerator.generateManyCloseBracket())
+                        }
+                    }
+
+                } else {
+                    throw Exception("xk value not found")
+                }
+            }
+        } else {
+            throw Exception("dxdtk node not found")
+        }
+    }
+
+    fun parseEquation(tree: SyntaxTree): String {
+        if (tree.token is SymbolToken) {
+            if (tree.token.symbolType == SymbolType.OpenBracket) {
+                countBracket++
+            } else if (tree.token.symbolType == SymbolType.CloseBracket) {
+                countBracket--;
+            }
+        }
+
+        val prevToken = tree.token.prevToken!!
+
+        if (prevToken is SymbolToken) {
+            if (prevToken.symbolType == SymbolType.Cos
+                    || prevToken.symbolType == SymbolType.Sin
+                    || prevToken.symbolType == SymbolType.Tg) {
+                if (tree.token !is SymbolToken) {
+                    throw InterpreterException(InterpreterErrorGenerator.generateFunOpenBracket())
+                } else if (tree.token is SymbolToken && tree.token.symbolType != SymbolType.OpenBracket) {
+                    throw InterpreterException(InterpreterErrorGenerator.generateFunOpenBracket())
+                }
+            }
+        }
+
+        var word = tree.token.word.word
+
+        if (tree.token.tokenType == TokenType.Integer) {
+            word += ".0"
+        }
+
+        if (tree.childs.isEmpty()) {
+            return word
+        }
+
+        return word + " " + parseEquation(tree.childs[0])
+    }
+
+    val replaсeMap = mapOf("sin" to "Math.sin", "cos" to "Math.cos", "tg" to "Math.tan")
+
+    fun prepareFuns(equal: String): String {
+        var result = equal;
+
+        for((o,n) in replaсeMap) {
+            if (result.contains(o)) {
+                result = result.replace(o, n)
+            }
+        }
+
+        return result
     }
 }

@@ -40,7 +40,7 @@ class DifferSyntaxAnalyzerTest {
         val eilerToken = eilerTree.token as MethodToken
 
         assertEquals(TokenType.Method, eilerToken.tokenType)
-        assertEquals(MethodType.Eiler, eilerToken.methodType)
+        assertEquals(MethodType.Euler, eilerToken.methodType)
 
         assertEquals(0, eilerTree.childs.count())
     }

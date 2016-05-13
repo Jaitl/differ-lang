@@ -45,7 +45,7 @@ class DifferLexicalAnalyzerTest {
 
         val methodToken = lexicalAnalyzer.nextToken() as MethodToken
         assertEquals(TokenType.Method, methodToken.tokenType)
-        assertEquals(MethodType.Eiler, methodToken.methodType)
+        assertEquals(MethodType.Euler, methodToken.methodType)
 
         val symbolToken = lexicalAnalyzer.nextToken() as SymbolToken
         assertEquals(TokenType.Symbol, symbolToken.tokenType)

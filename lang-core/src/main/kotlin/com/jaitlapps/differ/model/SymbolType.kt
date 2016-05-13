@@ -9,9 +9,12 @@ enum class SymbolType(val symbolName: String) {
     Subtraction("-"),
     Multiplication("*"),
     Division("/"),
-    Involution("ˆ"),
+    Involution("^"),
     OpenBracket("("),
-    CloseBracket(")");
+    CloseBracket(")"),
+    Sin("sin"),
+    Cos("cos"),
+    Tg("tg");
 
     companion object symbols {
         val SYMBOLS = hashMapOf(Equal.symbolName to Equal,
@@ -24,6 +27,9 @@ enum class SymbolType(val symbolName: String) {
                 Division.symbolName to Division,
                 Involution.symbolName to Involution,
                 OpenBracket.symbolName to OpenBracket,
-                CloseBracket.symbolName to CloseBracket)
+                CloseBracket.symbolName to CloseBracket,
+                Sin.symbolName to Sin,
+                Cos.symbolName to Cos,
+                Tg.symbolName to Tg)
     }
 }

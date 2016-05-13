@@ -198,4 +198,23 @@ class DifferLexicalAnalyzerTest {
         assertEquals(TokenType.Symbol, symbolToken.tokenType)
         assertEquals(SymbolType.Semicolon, symbolToken.symbolType)
     }
+
+    @Test
+    fun testSinFun() {
+        val lexicalAnalyzer = DifferLexicalAnalyzer(StringReader("sin cos tg"))
+        val sinToken = lexicalAnalyzer.nextToken() as SymbolToken
+
+        assertEquals(TokenType.Symbol, sinToken.tokenType)
+        assertEquals(SymbolType.Sin, sinToken.symbolType)
+
+        val cosToken = lexicalAnalyzer.nextToken() as SymbolToken
+
+        assertEquals(TokenType.Symbol, cosToken.tokenType)
+        assertEquals(SymbolType.Cos, cosToken.symbolType)
+
+        val tgToken = lexicalAnalyzer.nextToken() as SymbolToken
+
+        assertEquals(TokenType.Symbol, tgToken.tokenType)
+        assertEquals(SymbolType.Tg, tgToken.symbolType)
+    }
 }

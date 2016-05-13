@@ -77,7 +77,7 @@ class DifferSyntaxAnalyzerErrorTest {
         try {
             syntaxAnalyzer.generateSyntaxTree();
         } catch(e: SyntaxException) {
-            assertEquals("", e.message)
+            assertEquals("После оператора \";\" должен следовать следующий коэффициент, либо оператор \"Интервал\"", e.message)
         }
     }
 
@@ -89,7 +89,31 @@ class DifferSyntaxAnalyzerErrorTest {
         try {
             syntaxAnalyzer.generateSyntaxTree();
         } catch(e: SyntaxException) {
-            assertEquals("", e.message)
+            assertEquals("После оператора \";\" должно следовать следующее значение(xk), либо оператор \"Уравнения\"", e.message)
+        }
+    }
+
+    @Test
+    fun testMultiEquationError() {
+        val syntaxAnalyzer = DifferFactory.createSyntaxAnalyzer("Программа Метод Эйлера; Коэффициенты a = 10; b = 50; Интервал 0, 50; Шаг 0.6; Значения x11 = 10; x22 = 43; Уравнения dxdt1 = 2+3; dxdt2 = 5+6; 123",
+                DifferSyntaxRulesFactory.createDifferFullRules())
+
+        try {
+            syntaxAnalyzer.generateSyntaxTree();
+        } catch(e: SyntaxException) {
+            assertEquals("После оператора \";\" должно следовать следующее уравнение(dxdtk), либо оператор \"Конец\"", e.message)
+        }
+    }
+
+    @Test
+    fun testEndProgramError() {
+        val syntaxAnalyzer = DifferFactory.createSyntaxAnalyzer("Программа Метод Эйлера; Коэффициенты a = 10; b = 50; Интервал 0, 50; Шаг 0.6; Значения x11 = 10; x22 = 43; Уравнения dxdt1 = 2+3; dxdt2 = 5+6; Конец 123",
+                DifferSyntaxRulesFactory.createDifferFullRules())
+
+        try {
+            syntaxAnalyzer.generateSyntaxTree();
+        } catch(e: SyntaxException) {
+            assertEquals("После оператора \"Конец\" не должно быть других операторов", e.message)
         }
     }
 }

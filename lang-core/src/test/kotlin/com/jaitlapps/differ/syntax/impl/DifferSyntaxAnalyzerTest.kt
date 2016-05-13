@@ -3,10 +3,12 @@ package com.jaitlapps.differ.syntax.impl
 import com.jaitlapps.differ.factory.DifferFactory
 import com.jaitlapps.differ.model.KeywordType
 import com.jaitlapps.differ.model.MethodType
+import com.jaitlapps.differ.model.SymbolType
 import com.jaitlapps.differ.model.TokenType
 import com.jaitlapps.differ.model.token.KeywordToken
 import com.jaitlapps.differ.model.token.MethodToken
 import com.jaitlapps.differ.model.token.NumberToken
+import com.jaitlapps.differ.model.token.SymbolToken
 import com.jaitlapps.differ.syntax.rule.DifferSyntaxRulesFactory
 import org.junit.Assert
 import org.junit.Test
@@ -217,5 +219,89 @@ class DifferSyntaxAnalyzerTest {
         assertEquals(43, x22valToken.number.toInt())
 
         assertEquals(0, x22valTree.childs.count())
+    }
+
+    @Test
+    fun testEquation() {
+        val syntaxAnalyzer = DifferFactory.createSyntaxAnalyzer("Уравнения dxdt1 = 2+3; dxdt2 = 5+6;",
+                DifferSyntaxRulesFactory.createDifferEquationRules())
+
+        val tree = syntaxAnalyzer.generateSyntaxTree();
+
+        val programToken = tree.token as KeywordToken
+        assertEquals(TokenType.Keyword, programToken.tokenType)
+        assertEquals(KeywordType.Program, programToken.keywordType)
+
+        assertEquals(1, tree.childs.count())
+
+        val equationTree = tree.childs[0]
+        val equationToken = equationTree.token as KeywordToken
+
+        assertEquals(TokenType.Keyword, equationToken.tokenType)
+        assertEquals(KeywordType.Equation, equationToken.keywordType)
+
+        assertEquals(2, equationTree.childs.count())
+
+        val dxdt1Tree = equationTree.childs.first { tree -> tree.token.word.word == "dxdt1" }
+        val dxdt1Token = dxdt1Tree.token
+
+        assertEquals(TokenType.Dxdtk, dxdt1Token.tokenType)
+        assertEquals("dxdt1", dxdt1Token.word.word)
+
+        assertEquals(1, dxdt1Tree.childs.count())
+
+        val dxdt1val1Tree = dxdt1Tree.childs[0]
+        val dxdt1val1Token = dxdt1val1Tree.token as NumberToken
+
+        assertEquals(TokenType.Integer, dxdt1val1Token.tokenType)
+        assertEquals(2, dxdt1val1Token.number.toInt())
+
+        assertEquals(1, dxdt1val1Tree.childs.count())
+
+        val dxdt1sing1Tree = dxdt1val1Tree.childs[0]
+        val dxdt1sign1Token = dxdt1sing1Tree.token as SymbolToken
+
+        assertEquals(SymbolType.Addition, dxdt1sign1Token.symbolType)
+
+        assertEquals(1, dxdt1sing1Tree.childs.count())
+
+        val dxdt1val2Tree = dxdt1sing1Tree.childs[0]
+        val dxdt1val2Token = dxdt1val2Tree.token as NumberToken
+
+        assertEquals(TokenType.Integer, dxdt1val2Token.tokenType)
+        assertEquals(3, dxdt1val2Token.number.toInt())
+
+        assertEquals(0, dxdt1val2Tree.childs.count())
+
+        val dxdt2Tree = equationTree.childs.first { tree -> tree.token.word.word == "dxdt2" }
+        val dxdt2Token = dxdt2Tree.token
+
+        assertEquals(TokenType.Dxdtk, dxdt2Token.tokenType)
+        assertEquals("dxdt2", dxdt2Token.word.word)
+
+        assertEquals(1, dxdt2Tree.childs.count())
+
+        val dxdt2val1Tree = dxdt2Tree.childs[0]
+        val dxdt2val1Token = dxdt2val1Tree.token as NumberToken
+
+        assertEquals(TokenType.Integer, dxdt2val1Token.tokenType)
+        assertEquals(5, dxdt2val1Token.number.toInt())
+
+        assertEquals(1, dxdt2val1Tree.childs.count())
+
+        val dxdt2sing1Tree = dxdt2val1Tree.childs[0]
+        val dxdt2sign1Token = dxdt2sing1Tree.token as SymbolToken
+
+        assertEquals(SymbolType.Addition, dxdt2sign1Token.symbolType)
+
+        assertEquals(1, dxdt2sing1Tree.childs.count())
+
+        val dxdt2val2Tree = dxdt2sing1Tree.childs[0]
+        val dxdt2val2Token = dxdt2val2Tree.token as NumberToken
+
+        assertEquals(TokenType.Integer, dxdt2val2Token.tokenType)
+        assertEquals(6, dxdt2val2Token.number.toInt())
+
+        assertEquals(0, dxdt2val2Tree.childs.count())
     }
 }

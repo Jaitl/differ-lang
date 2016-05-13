@@ -59,7 +59,7 @@ class DifferLexicalAnalyzer(private val reader: Reader) : LexicalAnalyzer {
 
         val differential = tryDetermineDifferential(word)
         if (differential) {
-            return Token(word, TokenType.Differential)
+            return Token(word, TokenType.Dxdtk)
         }
 
         return Token(word, TokenType.Unknown)

@@ -14,7 +14,12 @@ object DifferSyntaxRulesFactory {
         val programRule = DifferSyntaxRule({token -> token is KeywordToken && token.keywordType == KeywordType.Program},
                 "Программа должна начинаться с оператора \"Программа\"", TreeSavePosition.None)
 
-        val value = createDifferValueRules()
+        val endProgramRule = DifferSyntaxRule({token -> token is KeywordToken && token.keywordType == KeywordType.EndProgram},
+                "После оператора \"Конец\" не должно быть других операторов", TreeSavePosition.None)
+
+        val equation = createDifferEquationRules(endRule = endProgramRule)
+
+        val value = createDifferValueRules(endRule = equation)
 
         val step = createDifferStepRules(endRule = value)
 
@@ -22,7 +27,7 @@ object DifferSyntaxRulesFactory {
 
         val coefficient = createDifferCoefficientRules(endRule = interval)
 
-        val methodRule = createDifferMethodRules(startRule = programRule, endRule = coefficient)
+        createDifferMethodRules(startRule = programRule, endRule = coefficient)
 
         return programRule
     }
@@ -71,7 +76,7 @@ object DifferSyntaxRulesFactory {
 
         numberRule.setNextRule(semiCoefficientRule)
 
-        val endCoefficientRule = ComposeDifferSyntaxRule("Ошибочка")
+        val endCoefficientRule = ComposeDifferSyntaxRule("После оператора \";\" должен следовать следующий коэффициент, либо оператор \"Интервал\"")
 
         semiCoefficientRule.setNextRule(endCoefficientRule)
 
@@ -165,7 +170,7 @@ object DifferSyntaxRulesFactory {
 
         numberRule.setNextRule(semiValueRule)
 
-        val endValueRule = ComposeDifferSyntaxRule("Ошибочка другая")
+        val endValueRule = ComposeDifferSyntaxRule("После оператора \";\" должно следовать следующее значение(xk), либо оператор \"Уравнения\"")
 
         semiValueRule.setNextRule(endValueRule)
 
@@ -178,5 +183,40 @@ object DifferSyntaxRulesFactory {
         }
 
         return valueRule
+    }
+
+    fun createDifferEquationRules(startRule: SyntaxRule? = null, endRule: SyntaxRule? = null): SyntaxRule {
+        val equationRule = DifferSyntaxRule({token -> token is KeywordToken && token.keywordType == KeywordType.Equation},
+                ErrorMessageGenerator.generateNextObject("Значения", "Уравнения"), TreeSavePosition.RootTree)
+
+        startRule?.setNextRule(equationRule)
+
+        val dxdtkRule = DifferSyntaxRule({token -> token.tokenType == TokenType.Dxdtk },
+                ErrorMessageGenerator.generateNextObject("Уравнения", "dxdtk"), TreeSavePosition.NodeTree)
+
+        equationRule.setNextRule(dxdtkRule)
+
+        val equalRule = DifferSyntaxRule({token -> token is SymbolToken && token.symbolType == SymbolType.Equal},
+                ErrorMessageGenerator.generateNextObject("dxdtk", "="), TreeSavePosition.None)
+
+        dxdtkRule.setNextRule(equalRule)
+
+        val semiValueRule = DifferSyntaxRule({token -> token is SymbolToken && token.symbolType == SymbolType.Semicolon}, ErrorMessageGenerator.generateEndSymbolObject("Уравнения", ";"), TreeSavePosition.None)
+
+        ExpressionSyntaxRuleFactory.createExpressionRules(equalRule, semiValueRule)
+
+        val endValueRule = ComposeDifferSyntaxRule("После оператора \";\" должно следовать следующее уравнение(dxdtk), либо оператор \"Конец\"")
+
+        semiValueRule.setNextRule(endValueRule)
+
+        endValueRule.setNextRule(dxdtkRule)
+
+        if (endRule != null) {
+            endValueRule.setNextRule(endRule)
+        } else {
+            endValueRule.setNextRule(EofRule)
+        }
+
+        return equationRule
     }
 }

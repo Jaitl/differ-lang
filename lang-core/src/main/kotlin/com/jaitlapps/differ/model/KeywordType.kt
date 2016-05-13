@@ -2,6 +2,7 @@ package com.jaitlapps.differ.model
 
 enum class KeywordType(val keywordName: String, val priority: Int) {
     Program("программа", 0),
+    EndProgram("конец", 0),
     Method("метод", 1),
     Coefficient("коэффициенты", 1),
     Interval("интервал", 1),
@@ -11,6 +12,7 @@ enum class KeywordType(val keywordName: String, val priority: Int) {
 
     companion object keywords {
         val KEYWORDS = mapOf(Program.keywordName to Program,
+                EndProgram.keywordName to EndProgram,
                 Method.keywordName to Method,
                 Coefficient.keywordName to Coefficient,
                 Interval.keywordName to Interval,

@@ -24,6 +24,6 @@ object ErrorMessageGenerator {
     }
 
     fun generateEndProgram(operator: String): String {
-        return "За оператором \"%s\" не должно быть других операторов".format(operator)
+        return "После оператора \"%s\" не должно быть других операторов".format(operator)
     }
 }

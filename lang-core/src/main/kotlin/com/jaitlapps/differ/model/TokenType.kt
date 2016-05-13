@@ -6,7 +6,7 @@ enum class TokenType() {
     Method,
     Coefficient,
     Xk,
-    Differential,
+    Dxdtk,
     Integer,
     Double,
     Unknown,

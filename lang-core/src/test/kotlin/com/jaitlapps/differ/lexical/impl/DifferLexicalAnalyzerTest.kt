@@ -181,7 +181,7 @@ class DifferLexicalAnalyzerTest {
         assertEquals(KeywordType.Equation, token.keywordType)
 
         val tokenDifferential = lexicalAnalyzer.nextToken()
-        assertEquals(TokenType.Differential, tokenDifferential.tokenType)
+        assertEquals(TokenType.Dxdtk, tokenDifferential.tokenType)
         assertEquals("dxdt1", tokenDifferential.word.word)
 
         val equalToken = lexicalAnalyzer.nextToken() as SymbolToken
@@ -216,5 +216,14 @@ class DifferLexicalAnalyzerTest {
 
         assertEquals(TokenType.Symbol, tgToken.tokenType)
         assertEquals(SymbolType.Tg, tgToken.symbolType)
+    }
+
+    @Test
+    fun testEndProgram() {
+        val lexicalAnalyzer = DifferLexicalAnalyzer(StringReader("Конец"))
+
+        val endToken = lexicalAnalyzer.nextToken() as KeywordToken
+
+        assertEquals(KeywordType.EndProgram, endToken.keywordType)
     }
 }

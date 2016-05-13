@@ -5,10 +5,14 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <title>Bootstrap 101 Template</title>
+    <title>Программа</title>
 
     <!-- Bootstrap -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+
+    <script src="js/jquery-2.2.3.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
     <script src="js/tinymce/tinymce.min.js"></script>
     <script src="js/app.js"></script>
 
@@ -17,12 +21,13 @@
 
 <div class="container">
     <div class="row">
-        <div class="col-md-6"><textarea id="codeEditor">asdasdasd</textarea></div>
-        <div class="col-md-6"><textarea class="form-control" rows="3">BNF</textarea></div>
+        <div class="col-md-6"><b>Программа:</b><br /><textarea id="codeEditor"></textarea></div>
+        <div class="col-md-6"><b>БНФ:</b><br /><textarea id="bnf-area" class="form-control" rows="15" readonly></textarea></div>
     </div>
+    <div><button id="bt-run" type="button" class="btn btn-success btn-lg">Выполнить</button></div>
+    <div style="clear: both;"></div>
+    <div id="error-container" class="alert alert-danger" role="alert">Ошибка</div>
 </div><!-- /.container -->
 
-<script src="js/jquery-2.2.3.min.js"></script>
-<script src="js/bootstrap.min.js"></script>
 </body>
 </html>

@@ -1,0 +1,29 @@
+* {
+    font-family: Tahoma, Verdana, Segoe, sans-serif;
+    font-size: 16px;
+    font-style: normal;
+    font-variant: normal;
+}
+
+html, body {
+    height: 100%;
+}
+
+p {
+    padding: 0px;
+    margin: 0px;
+}
+
+.container {
+    padding-top: 20px;
+    height: 80%;
+}
+
+#bt-run {
+    margin: 20px;
+    float: right;
+}
+
+#bnf-area {
+    background-color: white;
+}

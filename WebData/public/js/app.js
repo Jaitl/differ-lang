@@ -4,7 +4,7 @@ tinymce.init({
 	menubar: false,
 	statusbar: false,
 	toolbar: false,
-	height : "310"
+	height : "350"
 });
 //tinyMCE.activeEditor.getContent()
 
@@ -17,5 +17,18 @@ $(document).ready(function(){
 	$.get( "/api/bnf", function( data ) {
 		$("#bnf-area").text(data);
 	});
+
+	$.get( "/api/program", function( data ) {
+		$("#codeEditor").val(data);
+	});
+
+	$("#bt-run").click( function() {
+		$.post( "/compile", {"code": $("#codeEditor").val()})
+			.done(function( data ) {
+				//alert( "Data Loaded: " + data );
+			});
+	});
+
+
 	$("#error-container").hide()
 });

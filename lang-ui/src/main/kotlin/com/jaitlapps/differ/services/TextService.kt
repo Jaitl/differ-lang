@@ -1,7 +1,7 @@
 package com.jaitlapps.differ.services
 
 object TextService {
-    fun testToHtml(text: String): String {
-        return text
+    fun textToHtml(text: String): String {
+        return  "<p>" + text.replace("\n","</p><p>") + "</p>"
     }
 }

@@ -25,6 +25,12 @@ subprojects {
     version = '1.0'
 }
 
+project('lang-core') {
+    dependencies {
+        compile 'org.mvel:mvel2:2.2.8.Final'
+    }
+}
+
 project('lang-ui') {
     repositories {
         maven { url 'http://repository.jetbrains.com/all' }

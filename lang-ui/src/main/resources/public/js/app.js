@@ -23,10 +23,22 @@ $(document).ready(function(){
 	});
 
 	$("#bt-run").click( function() {
-		$.post( "/compile", {"code": $("#codeEditor").val()})
+		/*$.post( "/api/compile", JSON.stringify({"code": "dfsdsdf"}))
 			.done(function( data ) {
 				//alert( "Data Loaded: " + data );
-			});
+				});*/
+
+		$.ajax({
+			url: '/api/compile',
+			type: 'POST',
+			data: JSON.stringify({"code": $("#codeEditor").val()}),
+			contentType: 'application/json; charset=utf-8',
+			dataType: 'json',
+			async: false,
+			success: function(msg) {
+				alert(msg);
+			}
+		});
 	});
 
 

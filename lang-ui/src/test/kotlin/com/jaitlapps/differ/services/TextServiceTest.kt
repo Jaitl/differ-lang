@@ -5,9 +5,17 @@ import kotlin.test.assertEquals
 
 class TextServiceTest {
     @Test
-    fun testConvert() {
+    fun testConvertText() {
         val text = "Программа\nХорошо\nРаботает"
         val html = "<p>Программа</p><p>Хорошо</p><p>Работает</p>"
         assertEquals(html, TextService.textToHtml(text))
+    }
+
+    @Test
+    fun testConvertHtml() {
+        val text = "Программа\nХорошо\nРаботает"
+        val html = "<p>Программа</p><p>Хорошо</p><p>Работает</p>"
+
+        assertEquals(text, TextService.htmlToText(html))
     }
 }

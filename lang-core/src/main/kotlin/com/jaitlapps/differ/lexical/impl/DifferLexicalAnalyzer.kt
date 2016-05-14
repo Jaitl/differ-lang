@@ -12,7 +12,11 @@ class DifferLexicalAnalyzer(private val reader: Reader) : LexicalAnalyzer {
     override fun nextToken(): Token {
         val token: Token;
 
-        val word = reader.readNextWord()
+        var word = reader.readNextWord()
+
+        while  (word != null && word.word == "\n") {
+            word = reader.readNextWord()
+        }
 
         if (word != null) {
             token = determineToken(word)

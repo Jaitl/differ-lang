@@ -23,24 +23,34 @@ $(document).ready(function(){
 	});
 
 	$("#bt-run").click( function() {
-		/*$.post( "/api/compile", JSON.stringify({"code": "dfsdsdf"}))
-			.done(function( data ) {
-				//alert( "Data Loaded: " + data );
-				});*/
+		$("#error-container").hide();
+		$("#plot-container").hide();
 
 		$.ajax({
 			url: '/api/compile',
 			type: 'POST',
-			data: JSON.stringify({"code": $("#codeEditor").val()}),
+			data: JSON.stringify({"code": tinyMCE.activeEditor.getContent()}),
 			contentType: 'application/json; charset=utf-8',
 			dataType: 'json',
 			async: false,
-			success: function(msg) {
-				alert(msg);
+			success: function(result) {
+				if (result.error === false) {
+					$("#plot-container").show();
+					var myplot = $("#my-plot");
+					var myLineChart = new Chart(myplot, {
+						type: 'line',
+						data: result.result
+					});
+				} else {
+					console.log(result.textError)
+					$("#error-container").show();
+					$("#error-text").text(result.textError);
+				}
 			}
 		});
 	});
 
 
-	$("#error-container").hide()
+	$("#error-container").hide();
+	$("#plot-container").hide();
 });

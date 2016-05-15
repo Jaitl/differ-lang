@@ -1,4 +1,4 @@
-tinymce.init({
+var editor = tinymce.init({
 	plugins : 'paste',
 	selector:'#codeEditor',
 	content_css : '/css/style.css',
@@ -15,16 +15,17 @@ tinymce.init({
 				tinyMCE.activeEditor.setContent(data)
 			});
 		});
+
+		editor.on('focus', function(e) {
+			if ($.diffCode) {
+				tinyMCE.activeEditor.setContent($.diffCode)
+				$.diffCode = null;
+			}
+		});
 	}
 });
-//tinyMCE.activeEditor.getContent()
 
 $(document).ready(function(){
-	/*$(".btn-slide").click(function(){
-		$("#panel").slideToggle("slow");
-		$(this).toggleClass("active");
-	});*/
-
 	$.get( "/api/bnf", function( data ) {
 		$("#bnf-area").text(data);
 	});
@@ -49,9 +50,10 @@ $(document).ready(function(){
 						data: result.result
 					});
 				} else {
-					console.log(result.textError)
 					$("#error-container").show();
 					$("#error-text").text(result.textError);
+					$.diffCode = tinyMCE.activeEditor.getContent();
+					tinyMCE.activeEditor.setContent(result.highlightCode);
 				}
 			}
 		});

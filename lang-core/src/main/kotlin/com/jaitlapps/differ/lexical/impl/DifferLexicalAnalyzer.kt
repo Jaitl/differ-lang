@@ -14,7 +14,7 @@ class DifferLexicalAnalyzer(private val reader: Reader) : LexicalAnalyzer {
 
         var word = reader.readNextWord()
 
-        while  (word != null && word.word == "\n") {
+        while  (word != null && (word.word == "\n" || word.word == "\b")) {
             word = reader.readNextWord()
         }
 

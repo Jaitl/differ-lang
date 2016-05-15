@@ -18,4 +18,13 @@ class TextServiceTest {
 
         assertEquals(text, TextService.htmlToText(html))
     }
+
+    @Test
+    fun testConvertHtmlSpace() {
+        val text = "Программа \b \b\nХорошо\n\b \b Работает"
+        val html = "<p>Программа &nbsp; &nbsp;</p><p>Хорошо</p><p>&nbsp; &nbsp; Работает</p>"
+
+        assertEquals(text, TextService.htmlToText(html))
+        assertEquals(html, TextService.textToHtml(text))
+    }
 }

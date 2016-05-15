@@ -1,11 +1,11 @@
 package com.jaitlapps.differ.syntax
 
+import com.jaitlapps.differ.exceptions.SyntaxException
 import com.jaitlapps.differ.lexical.LexicalAnalyzer
 import com.jaitlapps.differ.model.KeywordType
 import com.jaitlapps.differ.model.TokenType
 import com.jaitlapps.differ.model.Word
 import com.jaitlapps.differ.model.token.KeywordToken
-import com.jaitlapps.differ.syntax.exception.SyntaxException
 import com.jaitlapps.differ.syntax.rule.EofRule
 import com.jaitlapps.differ.syntax.rule.FailureRuleResult
 import com.jaitlapps.differ.syntax.rule.SuccessRuleResult
@@ -26,7 +26,7 @@ class DifferSyntaxAnalyzer(val lexicalAnalyzer: LexicalAnalyzer, val rootRule: S
 
             when(result) {
                 is SuccessRuleResult -> {currentRule = result.rule; currentTree = result.tree}
-                is FailureRuleResult -> throw SyntaxException(result.errorMessage)
+                is FailureRuleResult -> throw SyntaxException(result.errorMessage, currentToken.prevToken!!)
             }
 
             if (currentToken is KeywordToken && currentToken.keywordType.priority == 1) {

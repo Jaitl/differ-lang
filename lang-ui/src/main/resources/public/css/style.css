@@ -27,3 +27,9 @@ p {
 #bnf-area {
     background-color: white;
 }
+
+.error {
+    color: red;
+    font-weight: bold;
+    text-decoration: underline;
+}

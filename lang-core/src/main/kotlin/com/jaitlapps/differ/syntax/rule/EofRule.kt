@@ -4,7 +4,7 @@ import com.jaitlapps.differ.model.TokenType
 import com.jaitlapps.differ.model.token.Token
 import com.jaitlapps.differ.syntax.TreeContext
 import com.jaitlapps.differ.syntax.error.ErrorMessageGenerator
-import com.jaitlapps.differ.syntax.exception.EofRuleException
+import com.jaitlapps.differ.exceptions.EofRuleException
 
 object EofRule : SyntaxRule {
     override fun applyRule(token: Token, treeContext: TreeContext): RuleResult {

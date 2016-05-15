@@ -1,7 +1,7 @@
 package com.jaitlapps.differ.syntax.impl
 
 import com.jaitlapps.differ.factory.DifferFactory
-import com.jaitlapps.differ.syntax.exception.SyntaxException
+import com.jaitlapps.differ.exceptions.SyntaxException
 import com.jaitlapps.differ.syntax.rule.DifferSyntaxRulesFactory
 import org.junit.Test
 import kotlin.test.assertEquals

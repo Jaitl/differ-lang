@@ -1,7 +1,7 @@
 package com.jaitlapps.differ.interpreter
 
+import com.jaitlapps.differ.exceptions.InterpreterException
 import com.jaitlapps.differ.interpreter.error.InterpreterErrorGenerator
-import com.jaitlapps.differ.interpreter.exception.InterpreterException
 import com.jaitlapps.differ.interpreter.methods.EulerMethod
 import com.jaitlapps.differ.interpreter.methods.MethodResult
 import com.jaitlapps.differ.model.KeywordType
@@ -65,7 +65,7 @@ class DifferInterpreter(val syntax: SyntaxAnalyzer) {
             for (node in coefficientsTree.childs) {
                 val coefName = node.token.word.word
                 if (coefficients.containsKey(coefName)) {
-                    throw InterpreterException(InterpreterErrorGenerator.generateOperatorAlreadyExist("Коэффициент", coefName))
+                    throw InterpreterException(InterpreterErrorGenerator.generateOperatorAlreadyExist("Коэффициент", coefName), node.token)
                 }
                 if (node.childs.count() == 1) {
                     val coefValue = node.childs[0].token as NumberToken
@@ -119,7 +119,7 @@ class DifferInterpreter(val syntax: SyntaxAnalyzer) {
             for (node in xkTree.childs) {
                 val xkName = node.token.word.word
                 if (xk.containsKey(xkName)) {
-                    throw InterpreterException(InterpreterErrorGenerator.generateOperatorAlreadyExist("xk", xkName))
+                    throw InterpreterException(InterpreterErrorGenerator.generateOperatorAlreadyExist("xk", xkName), node.token)
                 }
                 if (node.childs.count() == 1) {
                     val xkValue = node.childs[0].token as NumberToken
@@ -139,13 +139,14 @@ class DifferInterpreter(val syntax: SyntaxAnalyzer) {
         if (dxdtkTree != null) {
 
             if (dxdtkTree.childs.count() != xk.count()) {
-                throw InterpreterException(InterpreterErrorGenerator.generateCountValues())
+                val xkTree = tree.childs.findLast { tree -> val token = tree.token; token is KeywordToken && token.keywordType == KeywordType.Value }
+                throw InterpreterException(InterpreterErrorGenerator.generateCountValues(), xkTree!!.token)
             }
 
             for (node in dxdtkTree.childs) {
                 val dxdtkName = node.token.word.word
                 if (dxdtk.containsKey(dxdtkName)) {
-                    throw InterpreterException(InterpreterErrorGenerator.generateOperatorAlreadyExist("dxdtk", dxdtkName))
+                    throw InterpreterException(InterpreterErrorGenerator.generateOperatorAlreadyExist("dxdtk", dxdtkName), node.token)
                 }
                 if (node.childs.count() == 1) {
                     val dxdtkVal = prepareFuns(parseEquation(node.childs[0]))
@@ -153,9 +154,9 @@ class DifferInterpreter(val syntax: SyntaxAnalyzer) {
 
                     if (countBracket != 0) {
                         if (countBracket > 0) {
-                            throw InterpreterException(InterpreterErrorGenerator.generateManyOpenBracket())
+                            throw InterpreterException(InterpreterErrorGenerator.generateManyOpenBracket(), node.token)
                         } else {
-                            throw InterpreterException(InterpreterErrorGenerator.generateManyCloseBracket())
+                            throw InterpreterException(InterpreterErrorGenerator.generateManyCloseBracket(), node.token)
                         }
                     }
 
@@ -184,9 +185,9 @@ class DifferInterpreter(val syntax: SyntaxAnalyzer) {
                     || prevToken.symbolType == SymbolType.Sin
                     || prevToken.symbolType == SymbolType.Tg) {
                 if (tree.token !is SymbolToken) {
-                    throw InterpreterException(InterpreterErrorGenerator.generateFunOpenBracket())
+                    throw InterpreterException(InterpreterErrorGenerator.generateFunOpenBracket(), tree.token)
                 } else if (tree.token is SymbolToken && tree.token.symbolType != SymbolType.OpenBracket) {
-                    throw InterpreterException(InterpreterErrorGenerator.generateFunOpenBracket())
+                    throw InterpreterException(InterpreterErrorGenerator.generateFunOpenBracket(), tree.token)
                 }
             }
         }
@@ -207,7 +208,7 @@ class DifferInterpreter(val syntax: SyntaxAnalyzer) {
     val replaсeMap = mapOf("sin" to "Math.sin", "cos" to "Math.cos", "tg" to "Math.tan")
 
     fun prepareFuns(equal: String): String {
-        var result = equal;
+        var result = equal.toLowerCase()
 
         for((o,n) in replaсeMap) {
             if (result.contains(o)) {

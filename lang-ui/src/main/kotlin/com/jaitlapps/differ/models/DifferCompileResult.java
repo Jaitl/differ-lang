@@ -6,6 +6,7 @@ public class DifferCompileResult {
     private boolean error = false;
     private String textError;
     private MethodResult result;
+    private String highlightCode;
 
     public boolean isError() {
         return error;
@@ -24,10 +25,18 @@ public class DifferCompileResult {
     }
 
     public MethodResult getResult() {
-        return result; //Коши второго порядка,
+        return result;
     }
 
     public void setResult(MethodResult result) {
         this.result = result;
+    }
+
+    public String getHighlightCode() {
+        return highlightCode;
+    }
+
+    public void setHighlightCode(String highlightCode) {
+        this.highlightCode = highlightCode;
     }
 }

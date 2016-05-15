@@ -1,12 +1,13 @@
 package com.jaitlapps.differ
 
+import com.jaitlapps.differ.exceptions.InterpreterException
+import com.jaitlapps.differ.exceptions.SyntaxException
 import com.jaitlapps.differ.factory.DifferFactory
-import com.jaitlapps.differ.interpreter.exception.InterpreterException
 import com.jaitlapps.differ.models.DiffProgram
 import com.jaitlapps.differ.models.DifferCompileResult
 import com.jaitlapps.differ.services.DataService
+import com.jaitlapps.differ.services.HighlightError
 import com.jaitlapps.differ.services.TextService
-import com.jaitlapps.differ.syntax.exception.SyntaxException
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -37,9 +38,11 @@ class RestApi {
         } catch(e: SyntaxException) {
             result.isError = true
             result.textError = e.message
+            result.highlightCode = HighlightError.highlight(proCode, e.token.word)
         } catch(e: InterpreterException) {
             result.isError = true
             result.textError = e.message
+            result.highlightCode = HighlightError.highlight(proCode, e.token.word)
         } catch(e: Exception) {
             result.isError = true
             result.textError = "Ошибка во время выполнения программы"

@@ -1,7 +1,7 @@
 package com.jaitlapps.differ.interpreter
 
+import com.jaitlapps.differ.exceptions.InterpreterException
 import com.jaitlapps.differ.factory.DifferFactory
-import com.jaitlapps.differ.interpreter.exception.InterpreterException
 import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.fail

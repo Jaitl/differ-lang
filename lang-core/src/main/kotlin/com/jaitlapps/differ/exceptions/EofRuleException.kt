@@ -1,4 +1,4 @@
-package com.jaitlapps.differ.syntax.exception
+package com.jaitlapps.differ.exceptions
 
 class EofRuleException(message: String?) : Exception(message) {
 }

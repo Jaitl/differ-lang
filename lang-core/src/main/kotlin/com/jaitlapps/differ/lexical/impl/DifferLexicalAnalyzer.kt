@@ -82,7 +82,7 @@ class DifferLexicalAnalyzer(private val reader: Reader) : LexicalAnalyzer {
     }
 
     private fun tryDetermineCoefficient(word: Word): Boolean {
-        return word.capitalizedWord.matches(Regex("[a-z]"))
+        return word.capitalizedWord.matches(Regex("[a-z]+"))
     }
 
     private fun tryDetermineXk(word: Word): Boolean {

@@ -1,10 +1,14 @@
 tinymce.init({
+	plugins : 'paste',
 	selector:'#codeEditor',
 	content_css : '/css/style.css',
 	menubar: false,
 	statusbar: false,
 	toolbar: false,
-	height : "350"
+	height : "350",
+	paste_as_text: true,
+	paste_auto_cleanup_on_paste: true,
+	paste_word_valid_elements: false
 });
 //tinyMCE.activeEditor.getContent()
 

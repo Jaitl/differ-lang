@@ -26,7 +26,10 @@ class DifferSyntaxAnalyzer(val lexicalAnalyzer: LexicalAnalyzer, val rootRule: S
 
             when(result) {
                 is SuccessRuleResult -> {currentRule = result.rule; currentTree = result.tree}
-                is FailureRuleResult -> throw SyntaxException(result.errorMessage, currentToken.prevToken!!)
+                is FailureRuleResult -> when(currentToken.prevToken!!.tokenType) {
+                    TokenType.Start -> throw SyntaxException(result.errorMessage, currentToken)
+                    else -> throw SyntaxException(result.errorMessage, currentToken.prevToken!!)
+                }
             }
 
             if (currentToken is KeywordToken && currentToken.keywordType.priority == 1) {

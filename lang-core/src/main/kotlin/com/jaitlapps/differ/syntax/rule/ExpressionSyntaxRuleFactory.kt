@@ -15,7 +15,7 @@ object ExpressionSyntaxRuleFactory {
                     || t.tokenType == TokenType.Double
                     || t.tokenType == TokenType.Coefficient
                     || t.tokenType == TokenType.Xk
-        }, "", TreeSavePosition.CurrentTree)
+        }, {""}, TreeSavePosition.CurrentTree)
     }
 
     /**
@@ -29,7 +29,7 @@ object ExpressionSyntaxRuleFactory {
                     || t.symbolType == SymbolType.Multiplication
                     || t.symbolType == SymbolType.Division
                     || t.symbolType == SymbolType.Involution
-                    )}, "", TreeSavePosition.CurrentTree)
+                    )}, {""}, TreeSavePosition.CurrentTree)
     }
 
     /**
@@ -43,7 +43,7 @@ object ExpressionSyntaxRuleFactory {
                             || t.symbolType == SymbolType.Sin
                             || t.symbolType == SymbolType.Cos
                             || t.symbolType == SymbolType.Tg
-                    )}, "", TreeSavePosition.CurrentTree)
+                    )}, {""}, TreeSavePosition.CurrentTree)
     }
 
     /**
@@ -51,7 +51,7 @@ object ExpressionSyntaxRuleFactory {
      */
     fun createGroupFour(): SyntaxRule {
         return DifferSyntaxRule({ t -> t is SymbolToken && t.symbolType == SymbolType.CloseBracket},
-                "", TreeSavePosition.CurrentTree)
+                {""}, TreeSavePosition.CurrentTree)
     }
 
     fun createExpressionRules(startRule: SyntaxRule? = null, endRule: SyntaxRule? = null): SyntaxRule {
@@ -60,32 +60,32 @@ object ExpressionSyntaxRuleFactory {
         val g3 = createGroupThree()
         val g4 = createGroupFour()
 
-        val c0 = ComposeDifferSyntaxRule("После знака \"=\" должно следовать целое, вещественное, коэффициент, xk, открывающая скобка, знак минуса или функция")
+        val c0 = ComposeDifferSyntaxRule({"После знака \"=\" должно следовать целое, вещественное, коэффициент, xk, открывающая скобка, знак минуса или функция."})
         startRule?.setNextRule(c0)
 
         c0.setNextRule(g1)
         c0.setNextRule(g3)
 
-        val c1 = ComposeDifferSyntaxRule("После целого, вещественного, коэффициента или xk должен следовать знак математической операции, закрывающая скобка или знак \";\"")
+        val c1 = ComposeDifferSyntaxRule({token -> "После \"%s\" должен следовать знак математической операции, закрывающая скобка или знак \";\".".format(token.prevToken!!.word.word)})
         g1.setNextRule(c1)
 
         c1.setNextRule(g2)
         c1.setNextRule(g4)
         endRule?.run { c1.setNextRule(endRule) }
 
-        val c2 = ComposeDifferSyntaxRule("После знака математической операции должно следовать целое, вещественное, коэффициент, xk, открывающая скобка, знак минуса или функция")
+        val c2 = ComposeDifferSyntaxRule({token -> "После знака \"%s\" должно следовать целое, вещественное, коэффициент, xk, открывающая скобка, знак минуса или функция.".format(token.prevToken!!.word.word)})
         g2.setNextRule(c2)
 
         c2.setNextRule(g1)
         c2.setNextRule(g3)
 
-        val c3 = ComposeDifferSyntaxRule("После открывающей скобки, знака минуса или функции должено следовать следовать целое, вещественное, коэффициент, xk, открывающая скобка, знак минуса или функция")
+        val c3 = ComposeDifferSyntaxRule({token -> "После \"%s\" должено следовать следовать целое, вещественное, коэффициент, xk, открывающая скобка, знак минуса или функция.".format(token.prevToken!!.word.word)})
         g3.setNextRule(c3)
 
         c3.setNextRule(g3)
         c3.setNextRule(g1)
 
-        val c4 = ComposeDifferSyntaxRule("После закрывающей скобки должен следовать знак математической операции, закрывающая скобка или знак \";\"")
+        val c4 = ComposeDifferSyntaxRule({"После закрывающей скобки должен следовать знак математической операции, закрывающая скобка или знак \";\"."})
         g4.setNextRule(c4)
 
         c4.setNextRule(g2)
@@ -97,9 +97,9 @@ object ExpressionSyntaxRuleFactory {
 
     fun createTestExpressionRules(): SyntaxRule {
         val equalRule = DifferSyntaxRule({token -> token is SymbolToken && token.symbolType == SymbolType.Equal},
-                "", TreeSavePosition.None)
+                {""}, TreeSavePosition.None)
 
-        val semiCoefficientRule = DifferSyntaxRule({token -> token is SymbolToken && token.symbolType == SymbolType.Semicolon}, "", TreeSavePosition.None)
+        val semiCoefficientRule = DifferSyntaxRule({token -> token is SymbolToken && token.symbolType == SymbolType.Semicolon}, {""}, TreeSavePosition.None)
 
         createExpressionRules(equalRule, semiCoefficientRule)
 

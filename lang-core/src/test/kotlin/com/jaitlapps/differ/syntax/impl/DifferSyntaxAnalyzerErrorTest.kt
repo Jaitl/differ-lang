@@ -1,7 +1,7 @@
 package com.jaitlapps.differ.syntax.impl
 
-import com.jaitlapps.differ.factory.DifferFactory
 import com.jaitlapps.differ.exceptions.SyntaxException
+import com.jaitlapps.differ.factory.DifferFactory
 import com.jaitlapps.differ.syntax.rule.DifferSyntaxRulesFactory
 import org.junit.Test
 import kotlin.test.assertEquals
@@ -16,7 +16,7 @@ class DifferSyntaxAnalyzerErrorTest {
         try {
             syntaxAnalyzer.generateSyntaxTree();
         } catch(e: SyntaxException) {
-            assertEquals("Программа должна начинаться с оператора \"Программа\"", e.message)
+            assertEquals("Программа должна начинаться с оператора \"Программа\".", e.message)
         }
     }
 
@@ -28,7 +28,7 @@ class DifferSyntaxAnalyzerErrorTest {
         try {
             syntaxAnalyzer.generateSyntaxTree();
         } catch(e: SyntaxException) {
-            assertEquals("За оператором \"Программа\" должен следовать оператор \"Метод\"", e.message)
+            assertEquals("За оператором \"Программа\" должен следовать оператор \"Метод\".", e.message)
         }
     }
 
@@ -40,24 +40,12 @@ class DifferSyntaxAnalyzerErrorTest {
         try {
             syntaxAnalyzer.generateSyntaxTree();
         } catch(e: SyntaxException) {
-            assertEquals("За оператором \"Метод\" должен следовать один из операторов: \"Эйлера\", \"РунгеКутты\"", e.message)
+            assertEquals("За оператором \"Метод\" должен следовать один из операторов: \"Эйлера\", \"РунгеКутты\".", e.message)
         }
     }
 
     @Test
-    fun testEilerEndError() {
-        val syntaxAnalyzer = DifferFactory.createSyntaxAnalyzer("Программа Метод Эйлера Чтото",
-                DifferSyntaxRulesFactory.createDifferFullRules())
-
-        try {
-            syntaxAnalyzer.generateSyntaxTree();
-        } catch(e: SyntaxException) {
-            assertEquals("Оператор \"Метод\" должен заканчиваться символом \";\"", e.message)
-        }
-    }
-
-    @Test
-    fun testEilerEofError() {
+    fun testEulerEofError() {
         val syntaxAnalyzer = DifferFactory.createSyntaxAnalyzer("Программа Метод Эйлера",
                 DifferSyntaxRulesFactory.createDifferFullRules())
 
@@ -65,7 +53,7 @@ class DifferSyntaxAnalyzerErrorTest {
             syntaxAnalyzer.generateSyntaxTree();
             fail()
         } catch(e: SyntaxException) {
-            assertEquals("Оператор \"Метод\" должен заканчиваться символом \";\"", e.message)
+            assertEquals("После оператора \"Эйлера\" пропущен оператор \";\".", e.message)
         }
     }
 
@@ -77,7 +65,7 @@ class DifferSyntaxAnalyzerErrorTest {
         try {
             syntaxAnalyzer.generateSyntaxTree();
         } catch(e: SyntaxException) {
-            assertEquals("После оператора \";\" должен следовать следующий коэффициент, либо оператор \"Интервал\"", e.message)
+            assertEquals("После оператора \";\" должен следовать следующий коэффициент, либо оператор \"Интервал\".", e.message)
         }
     }
 
@@ -89,7 +77,7 @@ class DifferSyntaxAnalyzerErrorTest {
         try {
             syntaxAnalyzer.generateSyntaxTree();
         } catch(e: SyntaxException) {
-            assertEquals("После оператора \";\" должно следовать следующее значение(xk), либо оператор \"Уравнения\"", e.message)
+            assertEquals("После оператора \";\" должно следовать следующее значение(xk), либо оператор \"Уравнения\".", e.message)
         }
     }
 
@@ -101,7 +89,7 @@ class DifferSyntaxAnalyzerErrorTest {
         try {
             syntaxAnalyzer.generateSyntaxTree();
         } catch(e: SyntaxException) {
-            assertEquals("После оператора \";\" должно следовать следующее уравнение(dxdtk), либо оператор \"Конец\"", e.message)
+            assertEquals("После оператора \";\" должно следовать следующее уравнение(dxdtk), либо оператор \"Конец\".", e.message)
         }
     }
 
@@ -113,7 +101,19 @@ class DifferSyntaxAnalyzerErrorTest {
         try {
             syntaxAnalyzer.generateSyntaxTree();
         } catch(e: SyntaxException) {
-            assertEquals("После оператора \"Конец\" не должно быть других операторов", e.message)
+            assertEquals("После оператора \"Конец\" не должно быть других операторов.", e.message)
+        }
+    }
+
+    @Test
+    fun testBeginProgramError() {
+        val syntaxAnalyzer = DifferFactory.createSyntaxAnalyzer("Метод Эйлера;",
+                DifferSyntaxRulesFactory.createDifferFullRules())
+
+        try {
+            syntaxAnalyzer.generateSyntaxTree();
+        } catch(e: SyntaxException) {
+            assertEquals("Программа должна начинаться с оператора \"Программа\".", e.message)
         }
     }
 }

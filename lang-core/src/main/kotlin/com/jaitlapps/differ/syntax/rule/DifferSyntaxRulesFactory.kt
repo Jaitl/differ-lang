@@ -1,5 +1,6 @@
 package com.jaitlapps.differ.syntax.rule
 
+import com.jaitlapps.differ.error.helper.SyntaxErrorMessageGenerator
 import com.jaitlapps.differ.model.KeywordType
 import com.jaitlapps.differ.model.SymbolType
 import com.jaitlapps.differ.model.TokenType
@@ -7,15 +8,14 @@ import com.jaitlapps.differ.model.token.KeywordToken
 import com.jaitlapps.differ.model.token.MethodToken
 import com.jaitlapps.differ.model.token.NumberToken
 import com.jaitlapps.differ.model.token.SymbolToken
-import com.jaitlapps.differ.syntax.error.ErrorMessageGenerator
 
 object DifferSyntaxRulesFactory {
     fun createDifferFullRules() : SyntaxRule {
         val programRule = DifferSyntaxRule({token -> token is KeywordToken && token.keywordType == KeywordType.Program},
-                "Программа должна начинаться с оператора \"Программа\"", TreeSavePosition.None)
+                SyntaxErrorMessageGenerator.generateBeginProgram(), TreeSavePosition.None)
 
         val endProgramRule = DifferSyntaxRule({token -> token is KeywordToken && token.keywordType == KeywordType.EndProgram},
-                "После оператора \"Конец\" не должно быть других операторов", TreeSavePosition.None)
+                {SyntaxErrorMessageGenerator.generateEndProgram()}, TreeSavePosition.None)
 
         val equation = createDifferEquationRules(endRule = endProgramRule)
 
@@ -34,16 +34,16 @@ object DifferSyntaxRulesFactory {
 
     fun createDifferMethodRules(startRule: SyntaxRule? = null, endRule: SyntaxRule? = null): SyntaxRule {
         val methodRule = DifferSyntaxRule({token -> token is KeywordToken && token.keywordType == KeywordType.Method},
-                ErrorMessageGenerator.generateNextObject("Программа", "Метод"), TreeSavePosition.RootTree)
+                SyntaxErrorMessageGenerator.generateNextOperator("Метод"), TreeSavePosition.RootTree)
 
         startRule?.setNextRule(methodRule)
 
         val eilerRule = DifferSyntaxRule({token -> token is MethodToken},
-                ErrorMessageGenerator.generateNextMultipleObject("Метод", listOf("Эйлера", "РунгеКутты")), TreeSavePosition.NodeTree)
+                SyntaxErrorMessageGenerator.generateNextMultipleOperator(listOf("Эйлера", "РунгеКутты")), TreeSavePosition.NodeTree)
         methodRule.setNextRule(eilerRule)
 
         val endMetdodRule = DifferSyntaxRule({token -> token is SymbolToken && token.symbolType == SymbolType.Semicolon},
-                ErrorMessageGenerator.generateEndSymbolObject("Метод", ";"), TreeSavePosition.None)
+                SyntaxErrorMessageGenerator.generateMissingOperator(";"), TreeSavePosition.None)
 
         eilerRule.setNextRule(endMetdodRule)
 
@@ -52,31 +52,31 @@ object DifferSyntaxRulesFactory {
         return methodRule
     }
 
-    fun createDifferCoefficientRules(startRule: SyntaxRule? = null, endRule: SyntaxRule? = null): SyntaxRule {
+    fun createDifferCoefficientRules(endRule: SyntaxRule? = null): SyntaxRule {
         val coefficientRule = DifferSyntaxRule({token -> token is KeywordToken && token.keywordType == KeywordType.Coefficient},
-               ErrorMessageGenerator.generateNextObject("Метод", "Коеффециенты"), TreeSavePosition.RootTree)
+                SyntaxErrorMessageGenerator.generateNextOperator("Коеффециенты"), TreeSavePosition.RootTree)
 
         val coefNodeRule = DifferSyntaxRule({token -> token.tokenType == TokenType.Coefficient},
-                ErrorMessageGenerator.generateNextObject("Коеффециенты", "Коеффециент"), TreeSavePosition.NodeTree)
+                SyntaxErrorMessageGenerator.generateNextOperator("Коеффециент"), TreeSavePosition.NodeTree)
 
         coefficientRule.setNextRule(coefNodeRule)
 
         val equalRule = DifferSyntaxRule({token -> token is SymbolToken && token.symbolType == SymbolType.Equal},
-                ErrorMessageGenerator.generateNextObject("Коеффециент", "="), TreeSavePosition.None)
+                SyntaxErrorMessageGenerator.generateNextOperator("="), TreeSavePosition.None)
 
         coefNodeRule.setNextRule(equalRule)
 
         val numberRule = DifferSyntaxRule({token -> token is NumberToken &&
                 (token.tokenType == TokenType.Integer || token.tokenType == TokenType.Double)},
-                ErrorMessageGenerator.generateNextMultipleObject("=", listOf("Целое", "Вещественное")), TreeSavePosition.CurrentTree)
+                SyntaxErrorMessageGenerator.generateNextMultipleOperator(listOf("Целое", "Вещественное")), TreeSavePosition.CurrentTree)
 
         equalRule.setNextRule(numberRule)
 
-        val semiCoefficientRule = DifferSyntaxRule({token -> token is SymbolToken && token.symbolType == SymbolType.Semicolon}, ErrorMessageGenerator.generateEndSymbolObject("Коеффециенты", ";"), TreeSavePosition.None)
+        val semiCoefficientRule = DifferSyntaxRule({token -> token is SymbolToken && token.symbolType == SymbolType.Semicolon}, SyntaxErrorMessageGenerator.generateMissingOperator(";"), TreeSavePosition.None)
 
         numberRule.setNextRule(semiCoefficientRule)
 
-        val endCoefficientRule = ComposeDifferSyntaxRule("После оператора \";\" должен следовать следующий коэффициент, либо оператор \"Интервал\"")
+        val endCoefficientRule = ComposeDifferSyntaxRule({"После оператора \";\" должен следовать следующий коэффициент, либо оператор \"Интервал\"."})
 
         semiCoefficientRule.setNextRule(endCoefficientRule)
 
@@ -93,28 +93,28 @@ object DifferSyntaxRulesFactory {
 
     fun createDifferIntervalRules(startRule: SyntaxRule? = null, endRule: SyntaxRule? = null): SyntaxRule {
         val intervalRule = DifferSyntaxRule({token -> token is KeywordToken && token.keywordType == KeywordType.Interval},
-                ErrorMessageGenerator.generateNextObject("Коеффециенты", "Интервал"), TreeSavePosition.RootTree)
+                SyntaxErrorMessageGenerator.generateNextOperator("Интервал"), TreeSavePosition.RootTree)
 
         startRule?.setNextRule(intervalRule)
 
         val numberRuleOne = DifferSyntaxRule({token -> token is NumberToken &&
                 (token.tokenType == TokenType.Integer || token.tokenType == TokenType.Double)},
-                ErrorMessageGenerator.generateNextMultipleObject("Интервал", listOf("Целое", "Вещественное")), TreeSavePosition.NodeTree)
+                SyntaxErrorMessageGenerator.generateNextMultipleOperator(listOf("Целое", "Вещественное")), TreeSavePosition.NodeTree)
 
         intervalRule.setNextRule(numberRuleOne)
 
         val commaRule = DifferSyntaxRule({token -> token is SymbolToken && token.symbolType == SymbolType.Comma},
-                ErrorMessageGenerator.generateNextObject("Число", ","), TreeSavePosition.None)
+                SyntaxErrorMessageGenerator.generateNextOperator(","), TreeSavePosition.None)
 
         numberRuleOne.setNextRule(commaRule)
 
         val numberRuleTwo = DifferSyntaxRule({token -> token is NumberToken &&
                 (token.tokenType == TokenType.Integer || token.tokenType == TokenType.Double)},
-                ErrorMessageGenerator.generateNextMultipleObject(",", listOf("Целое", "Вещественное")), TreeSavePosition.NodeTree)
+                SyntaxErrorMessageGenerator.generateNextMultipleOperator(listOf("Целое", "Вещественное")), TreeSavePosition.NodeTree)
 
         commaRule.setNextRule(numberRuleTwo)
 
-        val semiCoefficientRule = DifferSyntaxRule({token -> token is SymbolToken && token.symbolType == SymbolType.Semicolon}, ErrorMessageGenerator.generateEndSymbolObject("Число", ";"), TreeSavePosition.None)
+        val semiCoefficientRule = DifferSyntaxRule({token -> token is SymbolToken && token.symbolType == SymbolType.Semicolon}, SyntaxErrorMessageGenerator.generateMissingOperator(";"), TreeSavePosition.None)
 
         numberRuleTwo.setNextRule(semiCoefficientRule)
 
@@ -125,17 +125,17 @@ object DifferSyntaxRulesFactory {
 
     fun createDifferStepRules(startRule: SyntaxRule? = null, endRule: SyntaxRule? = null): SyntaxRule {
         val stepRule = DifferSyntaxRule({token -> token is KeywordToken && token.keywordType == KeywordType.Step},
-                ErrorMessageGenerator.generateNextObject("Интервал", "Шаг"), TreeSavePosition.RootTree)
+                SyntaxErrorMessageGenerator.generateNextOperator("Шаг"), TreeSavePosition.RootTree)
 
         startRule?.setNextRule(stepRule)
 
         val numberRule = DifferSyntaxRule({token -> token is NumberToken &&
                 (token.tokenType == TokenType.Integer || token.tokenType == TokenType.Double)},
-                ErrorMessageGenerator.generateNextMultipleObject("Шаг", listOf("Целое", "Вещественное")), TreeSavePosition.NodeTree)
+                SyntaxErrorMessageGenerator.generateNextMultipleOperator(listOf("Целое", "Вещественное")), TreeSavePosition.NodeTree)
 
         stepRule.setNextRule(numberRule)
 
-        val semiCoefficientRule = DifferSyntaxRule({token -> token is SymbolToken && token.symbolType == SymbolType.Semicolon}, ErrorMessageGenerator.generateEndSymbolObject("Число", ";"), TreeSavePosition.None)
+        val semiCoefficientRule = DifferSyntaxRule({token -> token is SymbolToken && token.symbolType == SymbolType.Semicolon}, SyntaxErrorMessageGenerator.generateMissingOperator(";"), TreeSavePosition.None)
 
         numberRule.setNextRule(semiCoefficientRule)
 
@@ -146,31 +146,31 @@ object DifferSyntaxRulesFactory {
 
     fun createDifferValueRules(startRule: SyntaxRule? = null, endRule: SyntaxRule? = null): SyntaxRule {
         val valueRule = DifferSyntaxRule({token -> token is KeywordToken && token.keywordType == KeywordType.Value},
-                ErrorMessageGenerator.generateNextObject("Шаг", "Значения"), TreeSavePosition.RootTree)
+                SyntaxErrorMessageGenerator.generateNextOperator("Значения"), TreeSavePosition.RootTree)
 
         startRule?.setNextRule(valueRule)
 
         val xkRule = DifferSyntaxRule({token -> token.tokenType == TokenType.Xk},
-                ErrorMessageGenerator.generateNextObject("Значения", "xk"), TreeSavePosition.NodeTree)
+                SyntaxErrorMessageGenerator.generateNextOperator("xk"), TreeSavePosition.NodeTree)
 
         valueRule.setNextRule(xkRule)
 
         val equalRule = DifferSyntaxRule({token -> token is SymbolToken && token.symbolType == SymbolType.Equal},
-                ErrorMessageGenerator.generateNextObject("xk", "="), TreeSavePosition.None)
+                SyntaxErrorMessageGenerator.generateNextOperator("="), TreeSavePosition.None)
 
         xkRule.setNextRule(equalRule)
 
         val numberRule = DifferSyntaxRule({token -> token is NumberToken &&
                 (token.tokenType == TokenType.Integer || token.tokenType == TokenType.Double)},
-                ErrorMessageGenerator.generateNextMultipleObject("=", listOf("Целое", "Вещественное")), TreeSavePosition.CurrentTree)
+                SyntaxErrorMessageGenerator.generateNextMultipleOperator(listOf("Целое", "Вещественное")), TreeSavePosition.CurrentTree)
 
         equalRule.setNextRule(numberRule)
 
-        val semiValueRule = DifferSyntaxRule({token -> token is SymbolToken && token.symbolType == SymbolType.Semicolon}, ErrorMessageGenerator.generateEndSymbolObject("Значения", ";"), TreeSavePosition.None)
+        val semiValueRule = DifferSyntaxRule({token -> token is SymbolToken && token.symbolType == SymbolType.Semicolon}, SyntaxErrorMessageGenerator.generateMissingOperator(";"), TreeSavePosition.None)
 
         numberRule.setNextRule(semiValueRule)
 
-        val endValueRule = ComposeDifferSyntaxRule("После оператора \";\" должно следовать следующее значение(xk), либо оператор \"Уравнения\"")
+        val endValueRule = ComposeDifferSyntaxRule({"После оператора \";\" должно следовать следующее значение(xk), либо оператор \"Уравнения\"."})
 
         semiValueRule.setNextRule(endValueRule)
 
@@ -187,25 +187,25 @@ object DifferSyntaxRulesFactory {
 
     fun createDifferEquationRules(startRule: SyntaxRule? = null, endRule: SyntaxRule? = null): SyntaxRule {
         val equationRule = DifferSyntaxRule({token -> token is KeywordToken && token.keywordType == KeywordType.Equation},
-                ErrorMessageGenerator.generateNextObject("Значения", "Уравнения"), TreeSavePosition.RootTree)
+                SyntaxErrorMessageGenerator.generateNextOperator("Уравнения"), TreeSavePosition.RootTree)
 
         startRule?.setNextRule(equationRule)
 
         val dxdtkRule = DifferSyntaxRule({token -> token.tokenType == TokenType.Dxdtk },
-                ErrorMessageGenerator.generateNextObject("Уравнения", "dxdtk"), TreeSavePosition.NodeTree)
+                SyntaxErrorMessageGenerator.generateNextOperator("dxdtk"), TreeSavePosition.NodeTree)
 
         equationRule.setNextRule(dxdtkRule)
 
         val equalRule = DifferSyntaxRule({token -> token is SymbolToken && token.symbolType == SymbolType.Equal},
-                ErrorMessageGenerator.generateNextObject("dxdtk", "="), TreeSavePosition.None)
+                SyntaxErrorMessageGenerator.generateNextOperator("="), TreeSavePosition.None)
 
         dxdtkRule.setNextRule(equalRule)
 
-        val semiValueRule = DifferSyntaxRule({token -> token is SymbolToken && token.symbolType == SymbolType.Semicolon}, ErrorMessageGenerator.generateEndSymbolObject("Уравнения", ";"), TreeSavePosition.None)
+        val semiValueRule = DifferSyntaxRule({token -> token is SymbolToken && token.symbolType == SymbolType.Semicolon}, SyntaxErrorMessageGenerator.generateMissingOperator(";"), TreeSavePosition.None)
 
         ExpressionSyntaxRuleFactory.createExpressionRules(equalRule, semiValueRule)
 
-        val endValueRule = ComposeDifferSyntaxRule("После оператора \";\" должно следовать следующее уравнение(dxdtk), либо оператор \"Конец\"")
+        val endValueRule = ComposeDifferSyntaxRule({"После оператора \";\" должно следовать следующее уравнение(dxdtk), либо оператор \"Конец\"."})
 
         semiValueRule.setNextRule(endValueRule)
 

@@ -10,5 +10,6 @@ enum class TokenType() {
     Integer,
     Double,
     Unknown,
+    Start,
     Eof
 }

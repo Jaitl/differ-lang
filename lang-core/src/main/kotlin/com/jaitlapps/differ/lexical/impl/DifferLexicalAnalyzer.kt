@@ -7,7 +7,7 @@ import com.jaitlapps.differ.reader.Reader
 
 class DifferLexicalAnalyzer(private val reader: Reader) : LexicalAnalyzer {
 
-    private var prevToken: Token? = null
+    private var prevToken: Token? = Token(Word(0, 0, "", ""), TokenType.Start)
 
     override fun nextToken(): Token {
         val token: Token;

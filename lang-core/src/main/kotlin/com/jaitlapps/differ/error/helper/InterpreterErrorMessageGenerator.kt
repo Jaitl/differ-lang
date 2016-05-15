@@ -1,6 +1,6 @@
-package com.jaitlapps.differ.interpreter.error
+package com.jaitlapps.differ.error.helper
 
-object InterpreterErrorGenerator {
+object InterpreterErrorMessageGenerator {
     fun generateOperatorAlreadyExist(operator: String, name: String): String {
         return "%s с именем \"%s\" уже существует. Выберите другое имя.".format(operator, name)
     }

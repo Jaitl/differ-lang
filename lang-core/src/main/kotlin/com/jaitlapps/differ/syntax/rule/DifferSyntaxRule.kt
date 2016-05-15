@@ -5,7 +5,7 @@ import com.jaitlapps.differ.syntax.SyntaxTree
 import com.jaitlapps.differ.syntax.TreeContext
 
 class DifferSyntaxRule(val comparator: (token: Token) -> Boolean,
-                       val currentError: String, val savePosition: TreeSavePosition) : SyntaxRule {
+                       val currentError: (token: Token) -> String, val savePosition: TreeSavePosition) : SyntaxRule {
 
     private var nextRule: SyntaxRule = EofRule
 
@@ -28,6 +28,6 @@ class DifferSyntaxRule(val comparator: (token: Token) -> Boolean,
             return SuccessRuleResult(nextRule, saveContext.currentTree)
         }
 
-        return FailureRuleResult(currentError)
+        return FailureRuleResult(currentError(token))
     }
 }

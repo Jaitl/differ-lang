@@ -8,7 +8,14 @@ tinymce.init({
 	height : "350",
 	paste_as_text: true,
 	paste_auto_cleanup_on_paste: true,
-	paste_word_valid_elements: false
+	paste_word_valid_elements: false,
+	setup: function(editor) {
+		editor.on('init', function(e) {
+			$.get( "/api/program", function( data ) {
+				tinyMCE.activeEditor.setContent(data)
+			});
+		});
+	}
 });
 //tinyMCE.activeEditor.getContent()
 
@@ -20,10 +27,6 @@ $(document).ready(function(){
 
 	$.get( "/api/bnf", function( data ) {
 		$("#bnf-area").text(data);
-	});
-
-	$.get( "/api/program", function( data ) {
-		$("#codeEditor").val(data);
 	});
 
 	$("#bt-run").click( function() {

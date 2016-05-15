@@ -86,4 +86,28 @@ class DifferInterpreterErrorTest {
             assertEquals("После названия функции должна идти открывающая скобка.", e.message)
         }
     }
+
+    @Test
+    fun testCoeffNotDefined1() {
+        val interpreter = DifferFactory.createDifferInterpreter("Программа Метод Эйлера; Коэффициенты a = 7; Интервал 0, 2; Шаг 0.01; Значения x1 = 0.1; x2 = 0.5; Уравнения dxdt1 = x2; dxdt2 = de - 12 * x1 - 1.5 * x2; Конец")
+
+        try {
+            interpreter.run();
+            fail()
+        } catch (e: InterpreterException) {
+            assertEquals("Значение оператора \"de\" не определено.", e.message)
+        }
+    }
+
+    @Test
+    fun testCoeffNotDefined2() {
+        val interpreter = DifferFactory.createDifferInterpreter("Программа Метод Эйлера; Коэффициенты a = 7; Интервал 0, 2; Шаг 0.01; Значения x1 = 0.1; x2 = 0.5; Уравнения dxdt1 = x2; dxdt2 = a - 12 * x10 - 1.5 * x2; Конец")
+
+        try {
+            interpreter.run();
+            fail()
+        } catch (e: InterpreterException) {
+            assertEquals("Значение оператора \"x10\" не определено.", e.message)
+        }
+    }
 }

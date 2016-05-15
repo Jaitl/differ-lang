@@ -1,23 +1,15 @@
 package com.jaitlapps.differ.error.helper
 
 object InterpreterErrorMessageGenerator {
-    fun generateOperatorAlreadyExist(operator: String, name: String): String {
-        return "%s с именем \"%s\" уже существует. Выберите другое имя.".format(operator, name)
-    }
+    fun generateOperatorAlreadyExist(operator: String, name: String): String = "$operator с именем \"$name\" уже существует. Выберите другое имя."
 
-    fun generateManyOpenBracket(): String {
-        return "Количество открывающих скобок больше, чем количество закрывающих."
-    }
+    fun generateManyOpenBracket(): String = "Количество открывающих скобок больше, чем количество закрывающих."
 
-    fun generateManyCloseBracket(): String {
-        return "Количество закрывающих скобок больше, чем количество открывающих."
-    }
+    fun generateManyCloseBracket(): String = "Количество закрывающих скобок больше, чем количество открывающих."
 
-    fun generateCountValues(): String {
-        return "Количество значений должно быть равно количеству уравнений."
-    }
+    fun generateCountValues(): String = "Количество значений должно быть равно количеству уравнений."
 
-    fun generateFunOpenBracket(): String {
-        return "После названия функции должна идти открывающая скобка."
-    }
+    fun generateFunOpenBracket(): String = "После названия функции должна идти открывающая скобка."
+
+    fun generateValueNotDefined(operator: String): String = "Значение оператора \"$operator\" не определено."
 }

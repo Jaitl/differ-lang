@@ -4,6 +4,6 @@ import com.jaitlapps.differ.model.token.Token
 import com.jaitlapps.differ.syntax.TreeContext
 
 interface SyntaxRule {
-    fun applyRule(token: Token, treeContext: TreeContext): RuleResult
+    fun applyRule(token: Token, saveContext: TreeContext): RuleResult
     fun setNextRule(rule: SyntaxRule)
 }

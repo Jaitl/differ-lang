@@ -7,9 +7,9 @@ import com.jaitlapps.differ.model.token.Token
 import com.jaitlapps.differ.syntax.TreeContext
 
 object EofRule : SyntaxRule {
-    override fun applyRule(token: Token, treeContext: TreeContext): RuleResult {
+    override fun applyRule(token: Token, saveContext: TreeContext): RuleResult {
         if (token.tokenType == TokenType.Eof) {
-            return SuccessRuleResult(EofRule, treeContext.currentTree)
+            return SuccessRuleResult(EofRule, saveContext.currentTree)
         }
         return FailureRuleResult(SyntaxErrorMessageGenerator.generateEndProgram())
     }

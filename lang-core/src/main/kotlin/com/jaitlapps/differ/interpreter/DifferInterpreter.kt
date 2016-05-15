@@ -1,7 +1,7 @@
 package com.jaitlapps.differ.interpreter
 
-import com.jaitlapps.differ.exceptions.InterpreterException
 import com.jaitlapps.differ.error.helper.InterpreterErrorMessageGenerator
+import com.jaitlapps.differ.exceptions.InterpreterException
 import com.jaitlapps.differ.interpreter.methods.EulerMethod
 import com.jaitlapps.differ.interpreter.methods.MethodResult
 import com.jaitlapps.differ.model.KeywordType
@@ -190,6 +190,12 @@ class DifferInterpreter(val syntax: SyntaxAnalyzer) {
                     throw InterpreterException(InterpreterErrorMessageGenerator.generateFunOpenBracket(), tree.token)
                 }
             }
+        }
+
+        if (tree.token.tokenType == TokenType.Coefficient && !coefficients.containsKey(tree.token.word.word)) {
+            throw InterpreterException(InterpreterErrorMessageGenerator.generateValueNotDefined(tree.token.word.word), tree.token)
+        } else if (tree.token.tokenType == TokenType.Xk && !xk.containsKey(tree.token.word.word)) {
+            throw InterpreterException(InterpreterErrorMessageGenerator.generateValueNotDefined(tree.token.word.word), tree.token)
         }
 
         var word = tree.token.word.word

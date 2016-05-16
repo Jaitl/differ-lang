@@ -25,6 +25,15 @@ var editor = tinymce.init({
 	}
 });
 
+function getRandomColor() {
+	var letters = '0123456789ABCDEF'.split('');
+	var color = '#';
+	for (var i = 0; i < 6; i++ ) {
+		color += letters[Math.floor(Math.random() * 16)];
+	}
+	return color;
+}
+
 $(document).ready(function(){
 	$.get( "/api/bnf", function( data ) {
 		$("#bnf-area").text(data);
@@ -47,7 +56,12 @@ $(document).ready(function(){
 					var myplot = $("#my-plot");
 					var myLineChart = new Chart(myplot, {
 						type: 'line',
-						data: result.result
+						data: result.result,
+						fill: false,
+						fillColor: getRandomColor(),
+						strokeColor: getRandomColor(),
+						highlightFill: getRandomColor(),
+						highlightStroke: getRandomColor(),
 					});
 				} else {
 					$("#error-container").show();

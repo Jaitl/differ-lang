@@ -49,6 +49,10 @@ $(document).ready(function(){
 		$("#plot-container").hide();
 		$("#bnf-container").show();
 
+		if ($.lineChart != null) {
+			$.lineChart.destroy();
+		}
+
 		$.ajax({
 			url: '/api/compile',
 			type: 'POST',
@@ -69,7 +73,7 @@ $(document).ready(function(){
 					$("#plot-container").show();
 					$("#bnf-container").hide();
 					var myplot = $("#my-plot");
-					var myLineChart = new Chart(myplot, {
+					$.lineChart = new Chart(myplot, {
 						type: 'line',
 						data: result.result
 					});

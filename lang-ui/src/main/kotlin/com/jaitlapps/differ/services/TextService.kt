@@ -10,4 +10,5 @@ object TextService {
             .replace("<p>","")
             .replace("</p>", "")
             .replace("&nbsp;", "\b")
+            .replace("<br />", "\n")
 }

@@ -21,6 +21,11 @@ var editor = tinymce.init({
 				tinyMCE.activeEditor.setContent($.diffCode)
 				$.diffCode = null;
 			}
+
+			if ($('#bnf-container').is(':hidden')) {
+				$("#bnf-container").show();
+				$("#plot-container").hide();
+			}
 		});
 	}
 });
@@ -42,6 +47,7 @@ $(document).ready(function(){
 	$("#bt-run").click( function() {
 		$("#error-container").hide();
 		$("#plot-container").hide();
+		$("#bnf-container").show();
 
 		$.ajax({
 			url: '/api/compile',
@@ -52,16 +58,20 @@ $(document).ready(function(){
 			async: false,
 			success: function(result) {
 				if (result.error === false) {
+
+					result.result.datasets.forEach(function(elem) {
+						color = getRandomColor();
+						elem.fill = false;
+						elem.backgroundColor = color;
+						elem.borderColor = color;
+					});
+
 					$("#plot-container").show();
+					$("#bnf-container").hide();
 					var myplot = $("#my-plot");
 					var myLineChart = new Chart(myplot, {
 						type: 'line',
-						data: result.result,
-						fill: false,
-						fillColor: getRandomColor(),
-						strokeColor: getRandomColor(),
-						highlightFill: getRandomColor(),
-						highlightStroke: getRandomColor(),
+						data: result.result
 					});
 				} else {
 					$("#error-container").show();
@@ -76,4 +86,5 @@ $(document).ready(function(){
 
 	$("#error-container").hide();
 	$("#plot-container").hide();
+	$("#bnf-container").show();
 });

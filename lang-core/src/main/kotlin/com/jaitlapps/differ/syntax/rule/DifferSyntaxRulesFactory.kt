@@ -39,7 +39,9 @@ object DifferSyntaxRulesFactory {
         startRule?.setNextRule(methodRule)
 
         val eilerRule = DifferSyntaxRule({token -> token is MethodToken},
-                SyntaxErrorMessageGenerator.generateNextMultipleOperator(listOf("Эйлера", "РунгеКутты")), TreeSavePosition.NodeTree)
+                SyntaxErrorMessageGenerator.generateNextMultipleOperator(listOf("Эйлера", "РунгеКутта2", "РунгеКутта4")),
+                TreeSavePosition.NodeTree)
+
         methodRule.setNextRule(eilerRule)
 
         val endMetdodRule = DifferSyntaxRule({token -> token is SymbolToken && token.symbolType == SymbolType.Semicolon},

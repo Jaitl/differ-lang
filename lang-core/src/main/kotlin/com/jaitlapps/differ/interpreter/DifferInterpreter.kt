@@ -4,6 +4,8 @@ import com.jaitlapps.differ.error.helper.InterpreterErrorMessageGenerator
 import com.jaitlapps.differ.exceptions.InterpreterException
 import com.jaitlapps.differ.interpreter.methods.EulerMethod
 import com.jaitlapps.differ.interpreter.methods.MethodResult
+import com.jaitlapps.differ.interpreter.methods.RungeKutta2Method
+import com.jaitlapps.differ.interpreter.methods.RungeKutta4Method
 import com.jaitlapps.differ.model.KeywordType
 import com.jaitlapps.differ.model.MethodType
 import com.jaitlapps.differ.model.SymbolType
@@ -39,6 +41,8 @@ class DifferInterpreter(val syntax: SyntaxAnalyzer) {
 
         val methodCalc = when(method!!) {
             MethodType.Euler -> EulerMethod()
+            MethodType.RungeKutta2 -> RungeKutta2Method()
+            MethodType.RungeKutta4 -> RungeKutta4Method()
         }
 
         return methodCalc.calculate(coefficients, xk, startInterval!!, endInterval!!, step!!, dxdtk)

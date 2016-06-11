@@ -45,6 +45,11 @@ $(document).ready(function(){
 	});
 
 	$("#bt-run").click( function() {
+
+		if ($.diffCode) {
+			return;
+		}
+		
 		$("#error-container").hide();
 		$("#plot-container").hide();
 		$("#bnf-container").show();
